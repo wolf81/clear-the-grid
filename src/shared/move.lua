@@ -6,6 +6,10 @@ Move.new = function(x, y, direction, add)
     assert(direction ~= nil, 'direction is required')
     assert(add ~= nil, 'add is required')
 
+    local unpack = function(self)
+        return x, y, direction, add
+    end
+
     local toString = function(self)
         return string.format('%s %s %s %s', x, y, direction, add == true and '+' or '-')
     end
@@ -16,6 +20,7 @@ Move.new = function(x, y, direction, add)
     
     return setmetatable({
         clone       = clone,
+        unpack      = unpack,
         toString    = toString,
     }, Move)
 end

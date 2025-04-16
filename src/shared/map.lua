@@ -1,3 +1,5 @@
+local abs = math.abs
+
 local Map = {}
 
 local function generateMap(w, h)
@@ -29,8 +31,25 @@ function splitChars(str)
     return words
 end
 
-Map.new = function(w, h)
-    local data = generateMap(w, h)
+Map.new = function(...)
+    local args = {...}
+
+    local w, h = 0, 0
+    local data = {}
+
+    if #args == 1 then
+        assert(type(args[1]) == 'table', 'Invalid argument, table expected.')
+        data = args[1]
+        h = #data
+        w = #data[1]
+    end
+
+    if #args == 2 then
+        w, h = unpack(args)
+        assert(type(w) == 'number', 'Invalid argument #1, number expected.')
+        assert(type(h) == 'number', 'Invalid argument #2, number expected.')
+        data = generateMap(w, h)
+    end
 
     local getSize = function(self)
         return w, h
@@ -54,6 +73,49 @@ Map.new = function(w, h)
         return map
     end
 
+    local getValue = function(self, x, y)
+        return data[y][x]
+    end
+
+    local applyMove = function(self, move)
+        local x, y, dir, add = move:unpack()
+        local source_value = data[y][x]
+
+        if source_value == 0 then
+            return string.format(
+                'The move %s is invalid. The source cell %s,%s is empty.', 
+                move, 
+                x, 
+                y)
+        end
+
+        local dx, dy = Direction(dir):unpack()
+        local tx = x + dx * source_value
+        local ty = y + dy * source_value
+
+        if tx >= 1 and tx <= w and ty >= 1 and ty <= h then
+            local target_value = data[ty][tx]
+            if target_value == 0 then
+                return string.format(
+                    'The move %s is invalid. The destination cell %s,%s is empty.', 
+                    move,
+                    tx,
+                    ty)
+            end
+
+            data[y][x] = 0
+            if add then
+                data[ty][tx] = data[ty][tx] + source_value
+            else
+                data[ty][tx] = abs(data[ty][tx] - source_value)
+            end
+
+            return ''
+        end
+
+        return string.format('The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', move, tx, ty)
+    end
+
     local toString = function(self)
         local s = ''
 
@@ -72,7 +134,11 @@ Map.new = function(w, h)
         getSize     = getSize,
         setData     = setData,
         getData     = getData,
+        encode      = encode,
+        decode      = decode,
+        getValue    = getValue,
         toString    = toString,
+        applyMove   = applyMove,
     }, Map)
 end
 
@@ -98,6 +164,10 @@ Map.parse = function(contents)
     map:setData(data)
 
     return map
+end
+
+Map.decode = function(map)
+    return map:decode()
 end
 
 Map.__tostring = function(map)

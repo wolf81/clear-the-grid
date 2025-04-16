@@ -34,7 +34,7 @@ Game.new = function()
     local channel = lovr.thread.getChannel('test')
 
     -- Create a new thread called 'thread' using the code above
-    local thread = lovr.thread.newThread('src/solver.lua')
+    local thread = lovr.thread.newThread('solver.lua')
 
     -- Start the thread
     thread:start(map:getData()) 
