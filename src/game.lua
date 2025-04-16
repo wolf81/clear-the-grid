@@ -41,7 +41,9 @@ Game.new = function()
 
     local update = function(self, dt)
         local message = channel:pop()
-        print(message)    
+        if message then
+            print(message)    
+        end
     end
 
     local draw = function(self, pass)

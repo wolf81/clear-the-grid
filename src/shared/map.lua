@@ -66,7 +66,7 @@ Map.new = function(w, h)
 
         return string.gsub(s, '%s+$', '')
     end
-    
+
     return setmetatable({
         clone       = clone,
         getSize     = getSize,
@@ -100,8 +100,8 @@ Map.parse = function(contents)
     return map
 end
 
-Map.__tostring = function(self)
-    return self:toString()
+Map.__tostring = function(map)
+    return map:toString()
 end
 
 return setmetatable(Map, {

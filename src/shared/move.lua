@@ -20,11 +20,11 @@ Move.new = function(x, y, direction, add)
     }, Move)
 end
 
-Move.__tostring = function(self)
-    return self:toString()
+Move.__tostring = function(move)
+    return move:toString()
 end
 
-Move.empty = function(self)
+Move.empty = function()
     return Move(1, 1, 'U', false)
 end
 

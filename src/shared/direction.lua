@@ -22,8 +22,8 @@ Direction.new = function(dir)
     }, Direction)
 end
 
-Direction.__tostring = function(self)
-    return self:toString()
+Direction.__tostring = function(dir)
+    return dir:toString()
 end
 
 return setmetatable(Direction, {
