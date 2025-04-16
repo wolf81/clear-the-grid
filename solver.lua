@@ -16,7 +16,7 @@ assert(#args == 2, 'Missing arguments: channel & map_data')
 
 local channel = args[1]
 
-local rnd = lovr.math.newRandomGenerator()
+local rng = lovr.math.newRandomGenerator()
 
 local DIRS = { 'U', 'D', 'L', 'R' }
 
@@ -57,8 +57,7 @@ local isValidMove = function(map, move)
     local dx = x + dx * source_value
     local dy = y + dy * source_value
 
-    local w, h = map:getSize()
-    if dx >= 1 and dx <= w and dy >= 1 and dy <= h then
+    if map:inBounds(dx, dy) then
         local target_value = map:getValue(dx, dy)
         if target_value == 0 then return false end
         return true
@@ -102,12 +101,11 @@ local function playMoves(map, moves)
         })
 
         if not isValidMove(local_map, actual_move) then
-            print('find new valid move')
             local valid_moves = getValidMoves(local_map)
 
-            if #valid_moves == 0 then print('no more moves'); break end
+            if #valid_moves == 0 then break end
 
-            actual_move = valid_moves[rnd:random(#valid_moves)]
+            actual_move = valid_moves[rng:random(#valid_moves)]
         end
 
         local _ = local_map:applyMove(actual_move)
@@ -118,16 +116,16 @@ local function playMoves(map, moves)
     return local_map, actual_moves
 end
 
--- raw map data, since we cannot pass classes to threads
+-- generate a new Map from raw map data in arguments
 local map = Map(args[2])
+
+-- get all moves in the map, one for every coord
 local moves = getMoves(map)
 
 -- the best score is 0, so start how, work downwards
 local best_score = 999999
 
-local done = false
-
-while not done do
+while true do
     local new_map, actual_moves = playMoves(map, moves)
     local new_score = getMapScore(new_map)
     if new_score < best_score then
@@ -149,9 +147,9 @@ while not done do
 
         channel:push({ type = 'done', data = data })
 
-        done = true
+        break
     else
-        local idx = rnd:random(#moves)
+        local idx = rng:random(#moves)
         moves[idx] = Move.empty()
     end
 end

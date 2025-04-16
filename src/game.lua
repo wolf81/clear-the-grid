@@ -15,6 +15,8 @@ end
 Game.new = function()
     local map = loadLevel(1)
 
+    local state = 'processing' -- 'done'
+
     -- setup persective projection
     local window_w, window_h = lovr.system.getWindowDimensions()
     local aspect = window_w / window_h
@@ -44,18 +46,23 @@ Game.new = function()
     local update = function(self, dt)
         delay = delay - dt
 
-        if delay < 0 then
-            local message = channel:pop()
-            if message then
-                if message.type == 'test' then
-                    move = Move(unpack(message.data))
-                    delay = 0
-                end
+        if state == 'processing' then
+            if delay < 0 then
+                local message = channel:pop()
+                if message then
+                    if message.type == 'test' then
+                        move = Move(unpack(message.data))
+                        delay = 0
+                    end
 
-                if message.type == 'done' then
-                    -- show whole solution from start?
+                    if message.type == 'done' then
+                        -- show whole solution from start?
+                        state = 'done'
+                    end
                 end
             end
+        else -- state == 'done'
+
         end
 
         while delay < 0 do

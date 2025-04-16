@@ -1,25 +1,25 @@
 local Move = {}
 
-Move.new = function(x, y, direction, add)
+Move.new = function(x, y, dir, add)
     assert(x ~= nil, 'x is required')
     assert(y ~= nil, 'y is required')
-    assert(direction ~= nil, 'direction is required')
+    assert(dir ~= nil, 'direction is required')
     assert(add ~= nil, 'add is required')
 
     local unpack = function(self)
-        return x, y, direction, add
+        return x, y, dir, add
     end
 
     local toString = function(self)
-        return string.format('%s %s %s %s', x, y, direction, add == true and '+' or '-')
+        return string.format('%s %s %s %s', x, y, dir, add == true and '+' or '-')
     end
 
     local clone = function(self)
-        return Move(x, y, direction, add)
+        return Move(x, y, dir, add)
     end
 
     local isEmpty = function(self)
-        return x == 1 and y == 1 and direction == 'U' and add == false
+        return x == 1 and y == 1 and dir == 'U' and add == false
     end
 
     return setmetatable({

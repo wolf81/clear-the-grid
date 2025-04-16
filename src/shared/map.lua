@@ -2,35 +2,6 @@ local abs = math.abs
 
 local Map = {}
 
-local function generateMap(w, h)
-    local data = {}
-
-    for y = 1, h do
-        data[y] = {}
-        for x = 1, w do
-            data[y][x] = 0
-        end
-    end
-
-    return data
-end
-
-function splitLines(str)
-    local lines = {}
-    for line in string.gmatch(str, '([^\n]+)') do
-        table.insert(lines, line)
-    end
-    return lines
-end
-
-function splitChars(str)
-    local words = {}
-    for word in string.gmatch(str, '%S+') do
-        table.insert(words, word)
-    end
-    return words
-end
-
 Map.new = function(...)
     local args = {...}
 
@@ -48,7 +19,7 @@ Map.new = function(...)
         w, h = unpack(args)
         assert(type(w) == 'number', 'Invalid argument #1, number expected.')
         assert(type(h) == 'number', 'Invalid argument #2, number expected.')
-        data = generateMap(w, h)
+        data = Utils.newArray(w, h, 0)
     end
 
     local getSize = function(self)
@@ -102,7 +73,7 @@ Map.new = function(...)
         local dx = x + dx * source_value
         local dy = y + dy * source_value
 
-        if dx >= 1 and dx <= w and dy >= 1 and dy <= h then
+        if self:inBounds(dx, dy) then
             local target_value = data[dy][dx]
             if target_value == 0 then
                 return string.format(
@@ -165,22 +136,27 @@ Map.new = function(...)
         end
     end
 
+    local inBounds = function(self, x, y)
+        return x >= 1 and x <= w and y >= 1 and y <= h
+    end
+
     return setmetatable({
         iter        = iter,
         clone       = clone,
         getSize     = getSize,
         setData     = setData,
         getData     = getData,
+        inBounds    = inBounds,
         getValue    = getValue,
         toString    = toString,
-        applyMove   = applyMove,
         isSolved    = isSolved,
+        applyMove   = applyMove,
     }, Map)
 end
 
 Map.parse = function(contents)
-    local lines = splitLines(contents)
-    local chars = splitChars(lines[1])
+    local lines = Utils.splitLines(contents)
+    local chars = Utils.splitChars(lines[1])
     local w, h = tonumber(chars[1]), tonumber(chars[2])
     local map = Map(w, h)
 
@@ -190,7 +166,7 @@ Map.parse = function(contents)
         table.insert(data, {})
 
         local line = lines[row + 1]
-        chars = splitChars(line)
+        chars = Utils.splitChars(line)
 
         for col, char in ipairs(chars) do
             data[row][col] = tonumber(char)
