@@ -28,6 +28,9 @@ function lovr.load(args)
     local target = Vec3(target_x, 0, target_z)
     local position = Vec3(target.x, -8, target.z - 8)
     transform = Mat4():lookAt(position, target, vec3(0, 0, 1))
+
+    local move = Move(1, 1, Direction('U'), false)
+    print(move)
 end
 
 function lovr.update(dt)

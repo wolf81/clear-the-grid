@@ -1,8 +1,31 @@
-local M = {}
+local Direction = {}
 
-M.down  = Vec2( 0, -1)
-M.up    = Vec2( 0,  1)
-M.left  = Vec2(-1,  0)
-M.right = Vec2( 1,  0)
+local VALID_DIRS = {
+    U = {  0, -1 },
+    D = {  0,  1 },
+    L = { -1,  0 }, 
+    R = {  1,  0 },
+}
 
-return M
+Direction.new = function(dir)
+    assert(VALID_DIRS[dir], 
+        'Invalid direction, should be one of \'U\', \'D\' \'L\' or \'R\'.')
+
+    local dx, dy = unpack(VALID_DIRS[dir])
+
+    local tostring = function(self)
+        return dir
+    end
+    
+    return setmetatable({
+        tostring = tostring,
+    }, Direction)
+end
+
+Direction.__tostring = function(self)
+    return self:tostring()
+end
+
+return setmetatable(Direction, {
+    __call = function(_, ...) return Direction.new(...) end,
+})
