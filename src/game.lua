@@ -30,14 +30,14 @@ Game.new = function()
     local move = Move(1, 1, Direction('U'), false)
     print(move)
 
-    -- Create a new test channel
-    local channel = lovr.thread.getChannel('test')
-
     -- Create a new thread called 'thread' using the code above
     local thread = lovr.thread.newThread('solver.lua')
 
+    -- Create a channel for communication between threads
+    local channel = lovr.thread.newChannel()
+
     -- Start the thread
-    thread:start(map:getData()) 
+    thread:start(channel, map:getData()) 
 
     local update = function(self, dt)
         local message = channel:pop()

@@ -8,6 +8,14 @@ local lovr = {
 
 require 'src.dependencies'
 
+local args = {...}
+
+-- the first argument should be raw map data as it's 
+-- not possible to send custom classes to a LÖVR thread
+assert(#args == 2, 'Missing arguments: channel & map_data')
+
+local channel = args[1]
+
 local rnd = lovr.math.newRandomGenerator()
 
 local getMoves = function(map)
@@ -111,14 +119,8 @@ local function playMoves(map, moves)
     return local_map, actual_moves
 end
 
-local args = {...}
-
--- the first argument should be raw map data as it's 
--- not possible to send custom classes to a LÖVR thread
-assert(#args == 1, 'Missing argument: map_data')
-
 -- raw map data, since we cannot pass classes to threads
-local map = Map(args[1])
+local map = Map(args[2])
 local moves = getMoves(map)
 
 -- the best score is 0, so start how, work downwards
@@ -147,8 +149,6 @@ end
 while not done do
 
 end
-
-local channel = lovr.thread.getChannel('test')
 
 local x = 0
 while true do
