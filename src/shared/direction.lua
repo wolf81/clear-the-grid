@@ -13,17 +13,17 @@ Direction.new = function(dir)
 
     local dx, dy = unpack(VALID_DIRS[dir])
 
-    local tostring = function(self)
+    local toString = function(self)
         return dir
     end
     
     return setmetatable({
-        tostring = tostring,
+        toString = toString,
     }, Direction)
 end
 
 Direction.__tostring = function(self)
-    return self:tostring()
+    return self:toString()
 end
 
 return setmetatable(Direction, {

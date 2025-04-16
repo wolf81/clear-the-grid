@@ -11,7 +11,10 @@ local loadLevel = function(index)
     print(string.format('loading level: %s', path))
 
     local contents, bytes = lovr.filesystem.read(path, -1)
-    grid = Map.parse(contents):getData()
+    local map = Map.parse(contents)
+    print(map)
+
+    grid = map:getData()
 end 
 
 function lovr.load(args)

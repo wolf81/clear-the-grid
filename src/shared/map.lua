@@ -36,6 +36,10 @@ Map.new = function(w, h)
         return w, h
     end
 
+    local getData = function(self) 
+        return data 
+    end
+
     local setData = function(self, data_)
         assert(type(data_) == 'table', 'Invalid type for data, should be a table.')
         assert(#data_ == h, 'Invalid data, number of rows is not equal to height.')
@@ -44,14 +48,31 @@ Map.new = function(w, h)
         data = data_
     end
 
-    local getData = function(self) 
-        return data 
+    local clone = function(self)
+        local map = Map(w, h)
+        map:setData(data)
+        return map
+    end
+
+    local toString = function(self)
+        local s = ''
+
+        for y = 1, h do
+            for x = 1, w do
+                s = s .. data[y][x] .. ' '
+            end
+            s = s .. '\n'
+        end
+
+        return string.gsub(s, '%s+$', '')
     end
     
     return setmetatable({
-        getSize = getSize,
-        setData = setData,
-        getData = getData,
+        clone       = clone,
+        getSize     = getSize,
+        setData     = setData,
+        getData     = getData,
+        toString    = toString,
     }, Map)
 end
 
@@ -77,6 +98,10 @@ Map.parse = function(contents)
     map:setData(data)
 
     return map
+end
+
+Map.__tostring = function(self)
+    return self:toString()
 end
 
 return setmetatable(Map, {
