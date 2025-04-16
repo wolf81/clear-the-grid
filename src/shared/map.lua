@@ -13,19 +13,70 @@ local function generateMap(w, h)
     return data
 end
 
+function splitLines(str)
+    local lines = {}
+    for line in string.gmatch(str, "([^\n]+)") do
+        table.insert(lines, line)
+    end
+    return lines
+end
+
+function splitChars(str)
+    local words = {}
+    for word in string.gmatch(str, "%S+") do
+        table.insert(words, word)
+    end
+    return words
+end
+
 Map.new = function(w, h)
     local data = generateMap(w, h)
 
-    local getSize = function()
+    local getSize = function(self)
         return w, h
+    end
+
+    local setData = function(self, data_)
+        assert(type(data_) == 'table', 'Invalid type for data, should be a table.')
+        assert(#data_ == h, 'Invalid data, number of rows is not equal to height.')
+        assert(#data_[1] == w, 'Invalid data, number of columns is not equal to width.')
+
+        data = data_
+    end
+
+    local getData = function(self) 
+        return data 
     end
     
     return setmetatable({
         getSize = getSize,
+        setData = setData,
+        getData = getData,
     }, Map)
 end
 
-Map.parse = function(lines)
+Map.parse = function(contents)
+    local lines = splitLines(contents)
+    local chars = splitChars(lines[1])
+    local w, h = tonumber(chars[1]), tonumber(chars[2])
+    local map = Map(w, h)
+
+    local data = {}
+
+    for row = 1, h do
+        table.insert(data, {})
+
+        local line = lines[row + 1]
+        chars = splitChars(line)
+
+        for col, char in ipairs(chars) do
+            data[row][col] = tonumber(char)
+        end
+    end
+
+    map:setData(data)
+
+    return map
 end
 
 return setmetatable(Map, {
