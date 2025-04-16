@@ -10,7 +10,7 @@ require 'src.dependencies'
 
 local rnd = lovr.math.newRandomGenerator()
 
-local function getMoves(map)
+local getMoves = function(map)
     local rows, cols = map:getSize()
 
     local moves = {}
@@ -19,6 +19,22 @@ local function getMoves(map)
     end
 
     return moves
+end
+
+local getMapScore = function(map)
+    local result = 0
+
+    local w, h = map:getSize()
+
+    for y = 1, h do
+        for x = 1, w do
+            if map:getValue(x, y) > 0 then
+                result = result + 1
+            end
+        end
+    end
+
+    return result
 end
 
 local isValidMove = function(map, move)
@@ -30,7 +46,6 @@ local isValidMove = function(map, move)
     end
 
     local dx, dy = Direction(dir):unpack()
-    print(dx, dy)
 
     local tx = x + dx * source_value
     local ty = y + dy * source_value
@@ -88,8 +103,7 @@ local function playMoves(map, moves)
             actual_move = valid_moves[rnd:random(#valid_moves)]
         end
 
-        local r = map:applyMove(actual_move)
-        print(r)
+        local _ = map:applyMove(actual_move)
 
         table.insert(actual_moves, actual_move:clone())
     end
@@ -107,12 +121,28 @@ assert(#args == 1, 'Missing argument: map_data')
 local map = Map(args[1])
 local moves = getMoves(map)
 
-playMoves(map, moves)
-
 -- the best score is 0, so start how, work downwards
 local best_score = 999999
 
 local done = false
+
+local new_map, actual_moves = playMoves(map, moves)
+local new_score = getMapScore(new_map)
+if new_score < best_score then
+    print(string.format('New highscore: %s', new_score))
+    best_score = new_score
+
+    for i = 1, #actual_moves do
+        moves[i] = actual_moves[i]
+    end
+else
+    moves[rnd.random(#moves)] = Move.empty
+end
+
+if new_score == 0 then
+    print('Solution found!')
+    done = true
+end
 
 while not done do
 

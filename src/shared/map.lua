@@ -116,6 +116,18 @@ Map.new = function(...)
         return string.format('The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', move, tx, ty)
     end
 
+    local isSolved = function(self)
+        for y = 1, h do
+            for x = 1, w do
+                if data[y][x] ~= 0 then 
+                    return false 
+                end
+            end
+        end
+
+        return true
+    end
+
     local toString = function(self)
         local s = ''
 
@@ -139,6 +151,7 @@ Map.new = function(...)
         getValue    = getValue,
         toString    = toString,
         applyMove   = applyMove,
+        isSolved    = isSolved,
     }, Map)
 end
 
