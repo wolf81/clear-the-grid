@@ -113,16 +113,16 @@ Map.new = function(...)
             return ''
         end
 
-        return string.format('The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', move, tx, ty)
+        return string.format(
+            'The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', 
+            move, 
+            dx, 
+            dy)
     end
 
     local isSolved = function(self)
-        for y = 1, h do
-            for x = 1, w do
-                if data[y][x] ~= 0 then 
-                    return false 
-                end
-            end
+        for _, _, value in self:iter() do
+            if value ~= 0 then return false end
         end
 
         return true
@@ -131,23 +131,37 @@ Map.new = function(...)
     local toString = function(self)
         local s = ''
 
-        for y = 1, h do
-            for x = 1, w do
-                s = s .. data[y][x] .. ' '
-            end
-            s = s .. '\n'
+        for x, y, value in self:iter() do
+            s = s .. value .. ' '
+            if x == w then s = s .. '\n' end
         end
 
         return string.gsub(s, '%s+$', '')
     end
 
+    local iter = function(self)
+        local y = 1
+        local x = 0
+
+        return function()
+            x = x + 1
+            if x > w then
+                x = 1
+                y = y + 1
+            end
+            if y > h then
+                return nil
+            end
+            return x, y, data[y][x]
+        end
+    end
+
     return setmetatable({
+        iter        = iter,
         clone       = clone,
         getSize     = getSize,
         setData     = setData,
         getData     = getData,
-        encode      = encode,
-        decode      = decode,
         getValue    = getValue,
         toString    = toString,
         applyMove   = applyMove,

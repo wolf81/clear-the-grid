@@ -15,14 +15,13 @@ end
 Game.new = function()
     local map = loadLevel(1)
     print(map)
-    local grid = map:getData()
 
     -- setup persective projection
     local width, height = lovr.system.getWindowDimensions()
     perspective = Mat4():perspective(math.rad(90), width/height, 1, 0)    
 
     -- setup camera position & target towards center of the grid
-    local rows, cols = #grid, #grid[1]
+    local cols, rows = map:getSize()
     local target_x, target_z = cols / 2 * 1.1, -rows * 1.1
 
     local target = Vec3(target_x, 0, target_z)
@@ -63,22 +62,21 @@ Game.new = function()
 
         local mx, my = move:unpack()
 
-        local rows, cols = #grid, #grid[1]
-        for row = 1, rows do
-            for col = 1, cols do            
-                local x, z = col * 1.1, (rows - row) * 1.1
+        local cols, rows = map:getSize()
 
-                pass:setColor(0xff0000)
+        for col, row, value in map:iter() do
+            local x, z = col * 1.1, (rows - row) * 1.1
 
-                if my == row and mx == col then
-                    pass:setColor(0x00ff00)
-                end
-
-                pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
-
-                pass:setColor(0xffffff)
-                pass:text(grid[row][col], x, -0.0001, z - 10, 1, M_PI_2, 1, 0, 0)
+            -- draw squares that visually seem like a grid
+            pass:setColor(0xff0000)
+            if my == row and mx == col then
+                pass:setColor(0x00ff00)
             end
+            pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
+
+            -- draw number values slightly above each square
+            pass:setColor(0xffffff)
+            pass:text(value, x, -0.0001, z - 10, 1, M_PI_2, 1, 0, 0)
         end
     end
     
