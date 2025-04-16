@@ -97,9 +97,10 @@ local function playMoves(map, moves)
         local actual_move = move
 
         if not isValidMove(local_map, actual_move) then
+            print('find new valid move')
             local valid_moves = getValidMoves(local_map)
 
-            if #valid_moves == 0 then break end
+            if #valid_moves == 0 then print('no more moves'); break end
 
             actual_move = valid_moves[rnd:random(#valid_moves)]
         end
@@ -131,7 +132,7 @@ while not done do
         best_score = new_score
 
         for i = 1, #actual_moves do
-            moves[i] = actual_moves[i]
+            moves[i] = actual_moves[i]:clone()
         end
     end
 
@@ -139,6 +140,7 @@ while not done do
         print('Solution found!')
         done = true
     else
-        moves[rnd:random(#moves)] = Move.empty()
+        local idx = rnd:random(#moves)
+        moves[idx] = Move.empty()
     end
 end

@@ -17,7 +17,7 @@ end
 
 function splitLines(str)
     local lines = {}
-    for line in string.gmatch(str, "([^\n]+)") do
+    for line in string.gmatch(str, '([^\n]+)') do
         table.insert(lines, line)
     end
     return lines
@@ -25,7 +25,7 @@ end
 
 function splitChars(str)
     local words = {}
-    for word in string.gmatch(str, "%S+") do
+    for word in string.gmatch(str, '%S+') do
         table.insert(words, word)
     end
     return words
@@ -69,7 +69,16 @@ Map.new = function(...)
 
     local clone = function(self)
         local map = Map(w, h)
-        map:setData(data)
+
+        local copy = {}
+        for y = 1, h do
+            copy[y] = {}
+            for x = 1, w do
+                copy[y][x] = data[y][x]
+            end
+        end
+
+        map:setData(copy)
         return map
     end
 
