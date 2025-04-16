@@ -96,6 +96,11 @@ local function playMoves(map, moves)
     for _, move in ipairs(moves) do
         local actual_move = move
 
+        channel:push({
+            type = 'test',
+            data = { move:unpack() },
+        })
+
         if not isValidMove(local_map, actual_move) then
             print('find new valid move')
             local valid_moves = getValidMoves(local_map)
@@ -104,8 +109,6 @@ local function playMoves(map, moves)
 
             actual_move = valid_moves[rnd:random(#valid_moves)]
         end
-
-        channel:push({ actual_move:unpack() })
 
         local _ = local_map:applyMove(actual_move)
 
@@ -138,6 +141,14 @@ while not done do
 
     if new_score == 0 then
         print('Solution found!')
+
+        local data = {}
+        for _, move in ipairs(actual_moves) do
+            table.insert(data, { move:unpack() })
+        end
+
+        channel:push({ type = 'done', data = data })
+
         done = true
     else
         local idx = rnd:random(#moves)

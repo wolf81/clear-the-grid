@@ -14,7 +14,6 @@ end
 
 Game.new = function()
     local map = loadLevel(1)
-    print(map)
 
     -- setup persective projection
     local window_w, window_h = lovr.system.getWindowDimensions()
@@ -48,7 +47,14 @@ Game.new = function()
         if delay < 0 then
             local message = channel:pop()
             if message then
-                move = Move(unpack(message))
+                if message.type == 'test' then
+                    move = Move(unpack(message.data))
+                    delay = 0
+                end
+
+                if message.type == 'done' then
+                    -- show whole solution from start?
+                end
             end
         end
 
@@ -61,7 +67,10 @@ Game.new = function()
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
 
-        local mx, my = move:unpack()
+        local mx, my = 0, 0
+        if not move:isEmpty() then
+            mx, my, dir, add = move:unpack()
+        end
 
         local cols, rows = map:getSize()
 

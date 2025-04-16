@@ -17,10 +17,15 @@ Move.new = function(x, y, direction, add)
     local clone = function(self)
         return Move(x, y, direction, add)
     end
-    
+
+    local isEmpty = function(self)
+        return x == 1 and y == 1 and direction == 'U' and add == false
+    end
+
     return setmetatable({
         clone       = clone,
         unpack      = unpack,
+        isEmpty     = isEmpty,
         toString    = toString,
     }, Move)
 end
