@@ -1,5 +1,7 @@
 require 'src.dependencies'
 
+io.stdout:setvbuf('no')
+
 local grid = nil
 
 local loadLevel = function(index)
@@ -45,5 +47,11 @@ function lovr.draw(pass)
             pass:setColor(0xffffff)
             pass:text(grid[row][col], x, -0.0001, z - 10, 1, math.pi / 2, 1, 0, 0)
         end
+    end
+end
+
+function lovr.keyreleased(key, scancode)
+    if key == 'escape' then
+        lovr.event.quit()
     end
 end
