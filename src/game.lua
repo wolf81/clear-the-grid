@@ -17,13 +17,14 @@ Game.new = function()
     print(map)
 
     -- setup persective projection
-    local width, height = lovr.system.getWindowDimensions()
-    perspective = Mat4():perspective(math.rad(90), width/height, 1, 0)    
+    local window_w, window_h = lovr.system.getWindowDimensions()
+    local aspect = window_w / window_h
+    local near, far = 1, 0
+    perspective = Mat4():perspective(math.rad(90), aspect, near, far)    
 
     -- setup camera position & target towards center of the grid
     local cols, rows = map:getSize()
     local target_x, target_z = cols / 2 * 1.1, -rows * 1.1
-
     local target = Vec3(target_x, 0, target_z)
     local position = Vec3(target.x, -8, target.z - 8)
     transform = Mat4():lookAt(position, target, vec3(0, 0, 1))
