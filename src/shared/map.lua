@@ -90,24 +90,24 @@ Map.new = function(...)
         end
 
         local dx, dy = Direction(dir):unpack()
-        local tx = x + dx * source_value
-        local ty = y + dy * source_value
+        local dx = x + dx * source_value
+        local dy = y + dy * source_value
 
-        if tx >= 1 and tx <= w and ty >= 1 and ty <= h then
-            local target_value = data[ty][tx]
+        if dx >= 1 and dx <= w and dy >= 1 and dy <= h then
+            local target_value = data[dy][dx]
             if target_value == 0 then
                 return string.format(
                     'The move %s is invalid. The destination cell %s,%s is empty.', 
                     move,
-                    tx,
-                    ty)
+                    dx,
+                    dy)
             end
 
             data[y][x] = 0
             if add then
-                data[ty][tx] = data[ty][tx] + source_value
+                data[dy][dx] = data[dy][dx] + source_value
             else
-                data[ty][tx] = abs(data[ty][tx] - source_value)
+                data[dy][dx] = abs(data[dy][dx] - source_value)
             end
 
             return ''

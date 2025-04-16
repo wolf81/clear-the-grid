@@ -54,13 +54,12 @@ local isValidMove = function(map, move)
     end
 
     local dx, dy = Direction(dir):unpack()
-
-    local tx = x + dx * source_value
-    local ty = y + dy * source_value
+    local dx = x + dx * source_value
+    local dy = y + dy * source_value
 
     local w, h = map:getSize()
-    if tx >= 1 and tx <= w and ty >= 1 and ty <= h then
-        local target_value = map:getValue(tx, ty)
+    if dx >= 1 and dx <= w and dy >= 1 and dy <= h then
+        local target_value = map:getValue(dx, dy)
         if target_value == 0 then return false end
         return true
     end
@@ -89,8 +88,6 @@ local function getValidMoves(map)
         end
     end
 
-    print('moves', #moves)
-
     return moves
 end
 
@@ -111,7 +108,9 @@ local function playMoves(map, moves)
             actual_move = valid_moves[rnd:random(#valid_moves)]
         end
 
-        local _ = map:applyMove(actual_move)
+        channel:push({ actual_move:unpack() })
+
+        local _ = local_map:applyMove(actual_move)
 
         table.insert(actual_moves, actual_move:clone())
     end
@@ -128,30 +127,22 @@ local best_score = 999999
 
 local done = false
 
-local new_map, actual_moves = playMoves(map, moves)
-local new_score = getMapScore(new_map)
-if new_score < best_score then
-    print(string.format('New highscore: %s', new_score))
-    best_score = new_score
-
-    for i = 1, #actual_moves do
-        moves[i] = actual_moves[i]
-    end
-else
-    moves[rnd.random(#moves)] = Move.empty
-end
-
-if new_score == 0 then
-    print('Solution found!')
-    done = true
-end
-
 while not done do
+    local new_map, actual_moves = playMoves(map, moves)
+    local new_score = getMapScore(new_map)
+    if new_score < best_score then
+        print(string.format('New highscore: %s', new_score))
+        best_score = new_score
 
-end
+        for i = 1, #actual_moves do
+            moves[i] = actual_moves[i]
+        end
+    end
 
-local x = 0
-while true do
-    x = x + 1
-    channel:push(x)
+    if new_score == 0 then
+        print('Solution found!')
+        done = true
+    else
+        moves[rnd:random(#moves)] = Move.empty()
+    end
 end

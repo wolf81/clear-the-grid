@@ -2,6 +2,8 @@ local Game = {}
 
 local M_PI_2 = math.pi / 2
 
+local DELAY = 0.1
+
 local loadLevel = function(index)
     local path = string.format('dat/0XX/%d.txt', index)
     print(string.format('loading level: %s', path))
@@ -27,9 +29,6 @@ Game.new = function()
     local position = Vec3(target.x, -8, target.z - 8)
     transform = Mat4():lookAt(position, target, vec3(0, 0, 1))
 
-    local move = Move(1, 1, Direction('U'), false)
-    print(move)
-
     -- Create a new thread called 'thread' using the code above
     local thread = lovr.thread.newThread('solver.lua')
 
@@ -39,10 +38,22 @@ Game.new = function()
     -- Start the thread
     thread:start(channel, map:getData()) 
 
+    local delay = 0
+
+    local move = Move.empty()
+
     local update = function(self, dt)
-        local message = channel:pop()
-        if message then
-            print(message)    
+        delay = delay - dt
+
+        if delay < 0 then
+            local message = channel:pop()
+            if message then
+                move = Move(unpack(message))
+            end
+        end
+
+        while delay < 0 do
+            delay = delay + DELAY
         end
     end
 
@@ -50,12 +61,19 @@ Game.new = function()
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
 
+        local mx, my = move:unpack()
+
         local rows, cols = #grid, #grid[1]
         for row = 1, rows do
             for col = 1, cols do            
                 local x, z = col * 1.1, (rows - row) * 1.1
 
                 pass:setColor(0xff0000)
+
+                if my == row and mx == col then
+                    pass:setColor(0x00ff00)
+                end
+
                 pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
 
                 pass:setColor(0xffffff)
