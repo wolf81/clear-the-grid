@@ -10,10 +10,6 @@ Move.new = function(x, y, dir, add)
         return x, y, dir, add
     end
 
-    local toString = function(self)
-        return string.format('%s %s %s %s', x, y, dir, add == true and '+' or '-')
-    end
-
     local clone = function(self)
         return Move(x, y, dir, add)
     end
@@ -26,12 +22,12 @@ Move.new = function(x, y, dir, add)
         clone       = clone,
         unpack      = unpack,
         isEmpty     = isEmpty,
-        toString    = toString,
     }, Move)
 end
 
 Move.__tostring = function(move)
-    return move:toString()
+    local x, y, dir, add = move:unpack()
+    return string.format('%s %s %s %s', x, y, dir, add == true and '+' or '-')
 end
 
 Move.empty = function()

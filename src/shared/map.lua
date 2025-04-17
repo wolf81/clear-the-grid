@@ -108,17 +108,6 @@ Map.new = function(...)
         return true
     end
 
-    local toString = function(self)
-        local s = ''
-
-        for x, y, value in self:iter() do
-            s = s .. value .. ' '
-            if x == w then s = s .. '\n' end
-        end
-
-        return string.gsub(s, '%s+$', '')
-    end
-
     local iter = function(self)
         local y = 1
         local x = 0
@@ -183,7 +172,16 @@ Map.decode = function(map)
 end
 
 Map.__tostring = function(map)
-    return map:toString()
+    local s = ''
+
+    local w, _ = map:getSize()
+
+    for x, y, value in map:iter() do
+        s = s .. value .. ' '
+        if x == w then s = s .. '\n' end
+    end
+
+    return string.gsub(s, '%s+$', '')
 end
 
 return setmetatable(Map, {

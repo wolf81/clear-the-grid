@@ -14,6 +14,7 @@ end
 
 Game.new = function()
     local map = loadLevel(1)
+    print(map)
 
     local state = 'processing' -- 'done'
 
@@ -43,6 +44,9 @@ Game.new = function()
 
     local move = Move.empty()
 
+    -- a list of moves when state == 'done' 
+    local moves = {}
+
     local update = function(self, dt)
         delay = delay - dt
 
@@ -58,11 +62,26 @@ Game.new = function()
                     if message.type == 'done' then
                         -- show whole solution from start?
                         state = 'done'
+
+                        for _, raw_move in ipairs(message.data) do
+                            table.insert(moves, Move(unpack(raw_move)))
+                        end
+
+                        delay = 0.2
                     end
                 end
             end
         else -- state == 'done'
+            if delay < 0 then
+                if #moves == 0 then
+                    state = 'processing'
+                else
+                    local move = table.remove(moves, 1)
+                    map:applyMove(move)
+                end
 
+                delay = 1.0
+            end
         end
 
         while delay < 0 do
@@ -85,9 +104,9 @@ Game.new = function()
             local x, z = col * 1.1, (rows - row) * 1.1
 
             -- draw squares that visually seem like a grid
-            pass:setColor(0xff0000)
+            pass:setColor(0x888899)
             if my == row and mx == col then
-                pass:setColor(0x00ff00)
+                pass:setColor(0xfff000)
             end
             pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
 

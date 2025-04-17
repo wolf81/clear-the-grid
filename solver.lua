@@ -95,11 +95,6 @@ local function playMoves(map, moves)
     for _, move in ipairs(moves) do
         local actual_move = move
 
-        channel:push({
-            type = 'test',
-            data = { move:unpack() },
-        })
-
         if not isValidMove(local_map, actual_move) then
             local valid_moves = getValidMoves(local_map)
 
@@ -108,6 +103,11 @@ local function playMoves(map, moves)
             actual_move = valid_moves[rng:random(#valid_moves)]
         end
 
+        channel:push({
+            type = 'test',
+            data = { move:unpack() },
+        })
+        
         local _ = local_map:applyMove(actual_move)
 
         table.insert(actual_moves, actual_move:clone())
