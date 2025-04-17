@@ -26,6 +26,10 @@ Map.new = function(...)
         return w, h
     end
 
+    local getArea = function(self)
+        return w * h
+    end
+
     local getData = function(self) 
         return data 
     end
@@ -133,6 +137,7 @@ Map.new = function(...)
         iter        = iter,
         clone       = clone,
         getSize     = getSize,
+        getArea     = getArea,
         setData     = setData,
         getData     = getData,
         inBounds    = inBounds,
@@ -165,10 +170,6 @@ Map.parse = function(contents)
     map:setData(data)
 
     return map
-end
-
-Map.decode = function(map)
-    return map:decode()
 end
 
 Map.__tostring = function(map)

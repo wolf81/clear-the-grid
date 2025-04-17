@@ -21,10 +21,9 @@ local rng = lovr.math.newRandomGenerator()
 local DIRS = { 'U', 'D', 'L', 'R' }
 
 local getMoves = function(map)
-    local rows, cols = map:getSize()
-
     local moves = {}
-    for i = 1, rows * cols do
+
+    for i = 1, map:getArea() do
         table.insert(moves, Move.empty())
     end
 
@@ -33,8 +32,6 @@ end
 
 local getMapScore = function(map)
     local result = 0
-
-    local w, h = map:getSize()
 
     for x, y, value in map:iter() do
         if value > 0 then
@@ -58,9 +55,7 @@ local isValidMove = function(map, move)
     local dy = y + dy * source_value
 
     if map:inBounds(dx, dy) then
-        local target_value = map:getValue(dx, dy)
-        if target_value == 0 then return false end
-        return true
+        return map:getValue(dx, dy) ~= 0
     end
 
     return false
@@ -68,8 +63,6 @@ end
 
 local function getValidMoves(map)
     local moves = {}
-
-    local w, h = map:getSize()
 
     for x, y, value in map:iter() do
         for _, dir in ipairs(DIRS) do
