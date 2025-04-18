@@ -12,6 +12,17 @@ Map.new = function(w, h, data)
         data = { unpack(data) }
     end
 
+    local hash = nil
+
+    local getHash = function(self)
+        if not hash then
+            -- a very simple hash method, but guaranteed no collisions
+            hash = string.format('%d.%d.%s', w, h, table.concat(data))
+        end
+
+        return hash
+    end
+
     local getSize = function(self)
         return w, h
     end
@@ -115,6 +126,7 @@ Map.new = function(w, h, data)
         getSize     = getSize,
         getArea     = getArea,
         getData     = getData,
+        getHash     = getHash,
         inBounds    = inBounds,
         getValue    = getValue,
         toString    = toString,
