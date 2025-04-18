@@ -52,14 +52,18 @@ Game.new = function()
 
         if state == 'processing' then
             if delay < 0 then
-                local message = channel:pop()
-                if message then
+
+                for i = 1, channel:getCount() do
+                    local message = channel:pop()
+
                     if message.type == 'test' then
                         move = Move(unpack(message.data))
                         delay = 0
                     end
 
                     if message.type == 'done' then
+                        move = Move.empty()
+
                         -- show whole solution from start?
                         state = 'done'
 

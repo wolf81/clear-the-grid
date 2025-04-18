@@ -30,7 +30,7 @@ local getMoves = function(map)
     return moves
 end
 
-local getMapScore = function(map)
+local evaluateMap = function(map)
     local result = 0
 
     for x, y, value in map:iter() do
@@ -79,34 +79,62 @@ local function getValidMoves(map)
     return moves
 end
 
-local function playMoves(map, moves)
-    local actual_moves = {}
+local function playMoves(starting_map)
+    local best_score = math.huge
+    local best_moves = {}
 
-    -- don't mess up original map
-    local local_map = map:clone()
+    local stack = {
+        {
+            map = starting_map:clone(),
+            moves = {},
+        }
+    }
 
-    for _, move in ipairs(moves) do
-        local actual_move = move
+    while #stack > 0 do
+        local state = table.remove(stack)
+        local map = state.map
+        local moves = state.moves
 
-        if not isValidMove(local_map, actual_move) then
-            local valid_moves = getValidMoves(local_map)
+        local valid_moves = getValidMoves(map)
 
-            if #valid_moves == 0 then break end
+        if #valid_moves == 0 then
+            -- Terminal state: evaluate the map
+            local score = evaluateMap(map)
 
-            actual_move = valid_moves[rng:random(#valid_moves)]
+            if score < best_score then
+                print(string.format('New highscore: %s', score))
+            end
+
+            if score == 0 then
+                print('Solution found!')
+
+                best_score = score
+                best_moves = { unpack(moves) }
+
+                break
+            end
+        else
+            for _, move in ipairs(valid_moves) do
+                local new_map = map:clone()
+                new_map:applyMove(move)
+
+                channel:push({
+                    type = 'test',
+                    data = { move:unpack() },
+                })
+
+                local new_moves = { unpack(moves) }
+                table.insert(new_moves, move)
+
+                table.insert(stack, {
+                    map = new_map,
+                    moves = new_moves,
+                })
+            end
         end
-
-        channel:push({
-            type = 'test',
-            data = { move:unpack() },
-        })
-        
-        local _ = local_map:applyMove(actual_move)
-
-        table.insert(actual_moves, actual_move:clone())
     end
 
-    return local_map, actual_moves
+    return best_moves, best_score
 end
 
 -- generate a new Map from raw map data in arguments
@@ -118,31 +146,20 @@ local moves = getMoves(map)
 -- the best score is 0, so start how, work downwards
 local best_score = 999999
 
-while true do
-    local new_map, actual_moves = playMoves(map, moves)
-    local new_score = getMapScore(new_map)
-    if new_score < best_score then
-        print(string.format('New highscore: %s', new_score))
-        best_score = new_score
+local done = false
 
-        for i = 1, #actual_moves do
-            moves[i] = actual_moves[i]:clone()
-        end
+while true do
+    if not done then
+    local best_moves, best_score = playMoves(map)
+
+    local data = {}
+
+    for _, move in ipairs(best_moves) do
+        print(move)
+        table.insert(data, { move:unpack() })
     end
 
-    if new_score == 0 then
-        print('Solution found!')
-
-        local data = {}
-        for _, move in ipairs(actual_moves) do
-            table.insert(data, { move:unpack() })
-        end
-
-        channel:push({ type = 'done', data = data })
-
-        break
-    else
-        local idx = rng:random(#moves)
-        moves[idx] = Move.empty()
+    channel:push({ type = 'done', data = data })
+done = true
     end
 end
