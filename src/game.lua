@@ -38,7 +38,12 @@ Game.new = function()
     local channel = lovr.thread.newChannel()
 
     -- Start the thread
-    thread:start(channel, map:getData()) 
+    local map_w, map_h, map_data = map:unpack()
+    thread:start(channel, {
+        w = map_w,
+        h = map_h,
+        data = map_data
+    }) 
 
     local delay = 0
 

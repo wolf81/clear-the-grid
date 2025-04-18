@@ -1,25 +1,15 @@
-local abs = math.abs
+local abs, ceil = math.abs, math.ceil
 
 local Map = {}
 
-Map.new = function(...)
-    local args = {...}
-
-    local w, h = 0, 0
-    local data = {}
-
-    if #args == 1 then
-        assert(type(args[1]) == 'table', 'Invalid argument, table expected.')
-        data = args[1]
-        h = #data
-        w = #data[1]
-    end
-
-    if #args == 2 then
-        w, h = unpack(args)
-        assert(type(w) == 'number', 'Invalid argument #1, number expected.')
-        assert(type(h) == 'number', 'Invalid argument #2, number expected.')
-        data = Utils.newArray(w, h, 0)
+Map.new = function(w, h, data)
+    if not data then
+        data = Utils.newArray(w * h, 0)
+    else
+        assert(type(data) == 'table', 'Invalid type for data, should be a table.')
+        assert(#data == w * h, 'Invalid data, length not equal to map size.')
+        -- clone the data
+        data = { unpack(data) }
     end
 
     local getSize = function(self)
@@ -27,43 +17,30 @@ Map.new = function(...)
     end
 
     local getArea = function(self)
-        return w * h
+        return #data
     end
 
     local getData = function(self) 
         return data 
     end
 
-    local setData = function(self, data_)
-        assert(type(data_) == 'table', 'Invalid type for data, should be a table.')
-        assert(#data_ == h, 'Invalid data, number of rows is not equal to height.')
-        assert(#data_[1] == w, 'Invalid data, number of columns is not equal to width.')
-
-        data = data_
+    local clone = function(self)
+        return Map(w, h, data)
     end
 
-    local clone = function(self)
-        local map = Map(w, h)
-
-        local copy = {}
-        for y = 1, h do
-            copy[y] = {}
-            for x = 1, w do
-                copy[y][x] = data[y][x]
-            end
-        end
-
-        map:setData(copy)
-        return map
+    local unpack = function(self)
+        return w, h, data
     end
 
     local getValue = function(self, x, y)
-        return data[y][x]
+        local i = (y - 1) * w + x
+        return data[i]
     end
 
     local applyMove = function(self, move)
         local x, y, dir, add = move:unpack()
-        local source_value = data[y][x]
+        local i = (y - 1) * w + x
+        local source_value = data[i]
 
         if source_value == 0 then
             return string.format(
@@ -76,9 +53,10 @@ Map.new = function(...)
         local dx, dy = Direction(dir):unpack()
         local dx = x + dx * source_value
         local dy = y + dy * source_value
+        local di = (dy - 1) * w + dx
 
         if self:inBounds(dx, dy) then
-            local target_value = data[dy][dx]
+            local target_value = data[di]
             if target_value == 0 then
                 return string.format(
                     'The move %s is invalid. The destination cell %s,%s is empty.', 
@@ -87,11 +65,11 @@ Map.new = function(...)
                     dy)
             end
 
-            data[y][x] = 0
+            data[i] = 0
             if add then
-                data[dy][dx] = data[dy][dx] + source_value
+                data[di] = data[di] + source_value
             else
-                data[dy][dx] = abs(data[dy][dx] - source_value)
+                data[di] = abs(data[di] - source_value)
             end
 
             return ''
@@ -113,19 +91,16 @@ Map.new = function(...)
     end
 
     local iter = function(self)
-        local y = 1
-        local x = 0
+        local i = 0
 
         return function()
-            x = x + 1
-            if x > w then
-                x = 1
-                y = y + 1
-            end
-            if y > h then
-                return nil
-            end
-            return x, y, data[y][x]
+            i = i + 1
+
+            if i > #data then return nil end
+
+            local x, y = i % w, ceil(i / w)
+
+            return x + 1, y, data[i]
         end
     end
 
@@ -136,9 +111,9 @@ Map.new = function(...)
     return setmetatable({
         iter        = iter,
         clone       = clone,
+        unpack      = unpack,
         getSize     = getSize,
         getArea     = getArea,
-        setData     = setData,
         getData     = getData,
         inBounds    = inBounds,
         getValue    = getValue,
@@ -151,25 +126,20 @@ end
 Map.parse = function(contents)
     local lines = Utils.splitLines(contents)
     local chars = Utils.splitChars(lines[1])
-    local w, h = tonumber(chars[1]), tonumber(chars[2])
-    local map = Map(w, h)
 
+    local w, h = tonumber(chars[1]), tonumber(chars[2])
     local data = {}
 
     for row = 1, h do
-        table.insert(data, {})
-
         local line = lines[row + 1]
         chars = Utils.splitChars(line)
 
-        for col, char in ipairs(chars) do
-            data[row][col] = tonumber(char)
+        for _, char in ipairs(chars) do
+            table.insert(data, tonumber(char))
         end
     end
 
-    map:setData(data)
-
-    return map
+    return Map(w, h, data)
 end
 
 Map.__tostring = function(map)

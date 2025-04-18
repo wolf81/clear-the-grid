@@ -138,7 +138,8 @@ local function playMoves(starting_map)
 end
 
 -- generate a new Map from raw map data in arguments
-local map = Map(args[2])
+local map_info = args[2]
+local map = Map(map_info.w, map_info.h, map_info.data)
 
 -- get all moves in the map, one for every coord
 local moves = getMoves(map)

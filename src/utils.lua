@@ -1,14 +1,11 @@
 local M = {}
 
 -- generate a 2-dimensional array with value as default, or 0
-M.newArray = function(w, h, value)
+M.newArray = function(length, value)
     local arr = {}
 
-    for y = 1, h do
-        arr[y] = {}
-        for x = 1, w do
-            arr[y][x] = value or 0
-        end
+    for i = 1, length do
+        arr[i] = value or 0
     end
 
     return arr
