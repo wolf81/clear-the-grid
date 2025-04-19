@@ -31,7 +31,7 @@ Grid.new = function(map)
 
     local rows, cols = map:getSize()
 
-    local ox, oz = -(rows / 2) * 1.1, -(cols * 1.1)
+    local ox, oz = -(rows * 1.1 / 2) * 1.1, -(cols * 1.1)
 
     -- currently active moves
     local moves = {}
