@@ -31,6 +31,8 @@ Grid.new = function(map)
 
     local rows, cols = map:getSize()
 
+    local ox, oz = -(rows / 2) * 1.1, -(cols * 1.1)
+
     -- currently active moves
     local moves = {}
 
@@ -60,6 +62,9 @@ Grid.new = function(map)
     end
 
     local draw = function(self, pass)
+        pass:push()
+        pass:translate(ox, 0, oz)
+
         for col, row, value in map:iter() do
             local x, z = col * 1.1, (rows - row) * 1.1
 
@@ -69,18 +74,18 @@ Grid.new = function(map)
             pass:setColor(0.5, 0.5, 0.4, 1.0)
 
             local info = moves[getKey(col, row)]
-            local blend = info.value
             pass:send('blendColor', { 1.0, 0.5, 1.0, 1.0 })
             pass:send('blendAmount', info.value)
-
             pass:plane(x, 0, z, 1, 1, -M_PI_2, 1, 0, 0)
 
             pass:setShader()
 
             -- draw number values slightly above each square
             pass:setColor(0xffffff)
-            pass:text(value, x, -0.0001, z, 1, M_PI_2, 1, 0, 0)
+            pass:text(value, x, 0.0001, z, 1, -M_PI_2, 1, 0, 0)
         end
+
+        pass:pop()
     end
 
     local addMove = function(self, move)

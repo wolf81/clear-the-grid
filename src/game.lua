@@ -17,6 +17,20 @@ Game.new = function()
     local map = loadLevel(15)
     print(map)
 
+    local skybox_texture = lovr.graphics.newTexture({
+        left    = 'gfx/neg_z.png',
+        right   = 'gfx/neg_x.png',
+        top     = 'gfx/pos_y.png',
+        bottom  = 'gfx/neg_y.png',
+        front   = 'gfx/pos_x.png',
+        back    = 'gfx/pos_z.png'
+    })
+
+    local floor_material = lovr.graphics.newMaterial({
+        texture = 'gfx/grass.jpg',
+        uvScale = { 10, 10 },
+    })
+
     -- a grid is a visual representation of a map
     local grid = Grid(map)
 
@@ -33,10 +47,10 @@ Game.new = function()
 
     -- setup camera position & target towards center of the grid
     local cols, rows = map:getSize()
-    local target_x, target_z = cols / 2 * 1.1, rows / 2 * 1.1
-    local target = Vec3(target_x, 0, target_z)
-    local position = Vec3(target.x, -8, target.z - 4)
+    local target = Vec3(0, 0, 0)
+    local position = Vec3(target.x, 8, target.z - 4)
     transform = Mat4():lookAt(position, target, vec3(0, 0, 1))
+    transform:rotate(math.pi, 0, 1, 0)
 
     -- Create a new thread called 'thread' using the code above
     local thread = lovr.thread.newThread('solver.lua')
@@ -111,9 +125,14 @@ Game.new = function()
     end
 
     local draw = function(self, pass)
-        pass:setDepthTest('gequal')
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
+
+        pass:skybox(skybox_texture)
+
+        pass:setMaterial(floor_material)
+        pass:circle(0, -1, 0, 10, -math.pi / 2, 1, 0, 0)
+        pass:setMaterial()
                 
         grid:draw(pass)
         hud:draw(pass)
