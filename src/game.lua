@@ -97,6 +97,7 @@ Game.new = function()
                             table.insert(moves, Move(unpack(raw_move)))
                         end
 
+                        grid:setSolution(moves)
                         hud:setSolution(moves)
 
                         delay = 0.2

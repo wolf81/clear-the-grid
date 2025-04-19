@@ -36,6 +36,8 @@ Grid.new = function(map)
     -- currently active moves
     local moves = {}
 
+    local solution = {}
+
     for col, row, _ in map:iter() do
         moves[getKey(col, row)] = {
             value = 0.0,
@@ -57,6 +59,26 @@ Grid.new = function(map)
                 if info.value == 0 then
                     info.dir = 0
                 end
+            end
+        end
+
+        if #solution > 0 then
+            local move = solution[1]
+            move.delay = move.delay - dt
+
+            local from_x, from_y = unpack(move.from)
+            local from_key = getKey(from_x, from_y)
+
+            local to_x, to_y = unpack(move.to)
+            local to_key = getKey(to_x, to_y)
+
+            if move.delay < 0 then
+                table.remove(solution, 1)
+                moves[from_key].value = 0.0
+                moves[to_key].value = 0.0
+            else
+                moves[from_key].value = 1.0
+                moves[to_key].value = 1.0                
             end
         end
     end
@@ -93,10 +115,29 @@ Grid.new = function(map)
         moves[getKey(x, y)].dir = 1.0
     end
 
+    local setSolution = function(self, moves)
+        solution = {}
+
+        for _, move in ipairs(moves) do
+            -- local from_x, from_y, dir, _ = move:unpack()
+            -- local value = map:getValue(from_x, from_y)
+            -- local dx, dy = Direction(dir):unpack()
+            -- local to_x, to_y = from_x + dx * value, from_y + dy * value
+            -- print(from_x, from_y, to_x, to_y, value)
+
+            -- table.insert(solution, {
+            --     from    = { from_x, from_y },
+            --     to      = { to_x, to_y },
+            --     delay   = 1.0,
+            -- })
+        end
+    end
+
     return setmetatable({
-        addMove = addMove,
-        update  = update,
-        draw    = draw,
+        setSolution = setSolution,
+        addMove     = addMove,
+        update      = update,
+        draw        = draw,
     }, Grid)
 end
 
