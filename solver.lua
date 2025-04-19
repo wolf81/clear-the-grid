@@ -18,16 +18,6 @@ local channel = args[1]
 
 local DIRS = { 'U', 'D', 'L', 'R' }
 
-local getMoves = function(map)
-    local moves = {}
-
-    for i = 1, map:getArea() do
-        table.insert(moves, Move.empty())
-    end
-
-    return moves
-end
-
 local evaluateMap = function(map)
     local result = 0
 
