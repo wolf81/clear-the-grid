@@ -13,7 +13,7 @@ local loadLevel = function(index)
 end 
 
 Game.new = function()
-    local map = loadLevel(1)
+    local map = loadLevel(15)
     print(map)
 
     local state = 'processing' -- 'done'

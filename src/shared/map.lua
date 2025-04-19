@@ -54,7 +54,7 @@ Map.new = function(w, h, data)
         local source_value = data[i]
 
         if source_value == 0 then
-            return string.format(
+            return false, string.format(
                 'The move %s is invalid. The source cell %s,%s is empty.', 
                 move, 
                 x, 
@@ -66,31 +66,31 @@ Map.new = function(w, h, data)
         local dy = y + dy * source_value
         local di = (dy - 1) * w + dx
 
-        if self:inBounds(dx, dy) then
-            local target_value = data[di]
-            if target_value == 0 then
-                return string.format(
-                    'The move %s is invalid. The destination cell %s,%s is empty.', 
-                    move,
-                    dx,
-                    dy)
-            end
-
-            data[i] = 0
-            if add then
-                data[di] = data[di] + source_value
-            else
-                data[di] = abs(data[di] - source_value)
-            end
-
-            return ''
+        if not self:inBounds(dx, dy) then
+            return false, string.format(
+                'The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', 
+                move, 
+                dx, 
+                dy)
         end
 
-        return string.format(
-            'The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', 
-            move, 
-            dx, 
-            dy)
+        -- don't allow moves to cells containing 0
+        if data[di] == 0 then
+            return false, string.format(
+                'The move %s is invalid. The destination cell %s,%s is empty.', 
+                move,
+                dx,
+                dy)
+        end
+
+        data[i] = 0
+        if add then
+            data[di] = data[di] + source_value
+        else
+            data[di] = abs(data[di] - source_value)
+        end
+
+        return true
     end
 
     local isSolved = function(self)

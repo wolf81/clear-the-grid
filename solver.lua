@@ -10,13 +10,11 @@ require 'src.dependencies'
 
 local args = {...}
 
--- the first argument should be raw map data as it's 
--- not possible to send custom classes to a LÖVR thread
+-- the first argument should be a table with map_w, map_h, 
+-- map_data as LÖVR can't send custom objects over channel
 assert(#args == 2, 'Missing arguments: channel & map_data')
 
 local channel = args[1]
-
-local rng = lovr.math.newRandomGenerator()
 
 local DIRS = { 'U', 'D', 'L', 'R' }
 
@@ -102,6 +100,7 @@ local function playMoves(starting_map)
             local score = evaluateMap(map)
 
             if score < best_score then
+                best_score = score
                 print(string.format('New highscore: %s', score))
             end
 
@@ -141,26 +140,13 @@ end
 local map_info = args[2]
 local map = Map(map_info.w, map_info.h, map_info.data)
 
--- get all moves in the map, one for every coord
-local moves = getMoves(map)
+local best_moves, best_score = playMoves(map)
 
--- the best score is 0, so start how, work downwards
-local best_score = 999999
+local data = {}
 
-local done = false
-
-while true do
-    if not done then
-    local best_moves, best_score = playMoves(map)
-
-    local data = {}
-
-    for _, move in ipairs(best_moves) do
-        print(move)
-        table.insert(data, { move:unpack() })
-    end
-
-    channel:push({ type = 'done', data = data })
-done = true
-    end
+for _, move in ipairs(best_moves) do
+    print(move)
+    table.insert(data, { move:unpack() })
 end
+
+channel:push({ type = 'done', data = data })
