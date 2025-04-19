@@ -1,6 +1,6 @@
-local Game = {}
+local Grid = require 'src.grid'
 
-local M_PI_2 = math.pi / 2
+local Game = {}
 
 local DELAY = 0.1
 
@@ -15,6 +15,9 @@ end
 Game.new = function()
     local map = loadLevel(15)
     print(map)
+
+    -- a grid is a visual representation of a map
+    local grid = Grid(map)
 
     local state = 'processing' -- 'done'
 
@@ -62,7 +65,7 @@ Game.new = function()
                     local message = channel:pop()
 
                     if message.type == 'test' then
-                        move = Move(unpack(message.data))
+                        grid:addMove(Move(unpack(message.data)))
                         delay = 0
                     end
 
@@ -95,34 +98,16 @@ Game.new = function()
 
         while delay < 0 do
             delay = delay + DELAY
-        end
+        end      
+
+        grid:update(dt)  
     end
 
     local draw = function(self, pass)
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
-
-        local mx, my = 0, 0
-        if not move:isEmpty() then
-            mx, my, dir, add = move:unpack()
-        end
-
-        local cols, rows = map:getSize()
-
-        for col, row, value in map:iter() do
-            local x, z = col * 1.1, (rows - row) * 1.1
-
-            -- draw squares that visually seem like a grid
-            pass:setColor(0x888899)
-            if my == row and mx == col then
-                pass:setColor(0xfff000)
-            end
-            pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
-
-            -- draw number values slightly above each square
-            pass:setColor(0xffffff)
-            pass:text(value, x, -0.0001, z - 10, 1, M_PI_2, 1, 0, 0)
-        end
+                
+        grid:draw(pass)
     end
     
     return setmetatable({
