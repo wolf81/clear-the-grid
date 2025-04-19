@@ -12,7 +12,7 @@ local args = {...}
 
 -- the first argument should be a table with map_w, map_h, 
 -- map_data as LÖVR can't send custom objects over channel
-assert(#args == 2, 'Missing arguments: channel & map_data')
+assert(#args == 2, 'Arguments required: channel & map_info')
 
 local channel = args[1]
 
@@ -56,8 +56,9 @@ local function getValidMoves(map)
         if map:getValue(x, y) == 0 then goto continue end
 
         for _, dir in ipairs(DIRS) do
-            for i = 1, 2 do
-                local move = Move(x, y, dir, i == 1)
+            for _, move in ipairs({ 
+                Move(x, y, dir, true), 
+                Move(x, y, dir, false)}) do
 
                 local dx, dy = Direction(dir):unpack()
                 local dx = x + dx * value
@@ -65,6 +66,7 @@ local function getValidMoves(map)
                 if map:inBounds(dx, dy) and map:getValue(dx, dy) ~= 0 then
                     table.insert(moves, move)
                 end
+
             end
         end
 

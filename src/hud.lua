@@ -3,7 +3,7 @@ local Hud = {}
 Hud.new = function()
     local window_w, window_h = lovr.system.getWindowDimensions()
 
-    -- setup orthographic projection for showing 'hud'
+    -- setup orthographic projection for showing 2D 'hud'
     local orthographic = Mat4():orthographic(window_w, window_h, -10, 10)
     local identity = Mat4():identity()
 
