@@ -1,4 +1,5 @@
 local Grid = require 'src.grid'
+local Hud = require 'src.hud'
 
 local Game = {}
 
@@ -19,13 +20,16 @@ Game.new = function()
     -- a grid is a visual representation of a map
     local grid = Grid(map)
 
+    local hud = Hud()
+    hud:setLevel(15)
+
     local state = 'processing' -- 'done'
 
-    -- setup persective projection
+    -- setup perspective projection for showing grid
     local window_w, window_h = lovr.system.getWindowDimensions()
     local aspect = window_w / window_h
     local near, far = 1, 0
-    perspective = Mat4():perspective(math.rad(90), aspect, near, far)    
+    local perspective = Mat4():perspective(math.rad(90), aspect, near, far)
 
     -- setup camera position & target towards center of the grid
     local cols, rows = map:getSize()
@@ -79,6 +83,8 @@ Game.new = function()
                             table.insert(moves, Move(unpack(raw_move)))
                         end
 
+                        hud:setSolution(moves)
+
                         delay = 0.2
                     end
                 end
@@ -101,13 +107,16 @@ Game.new = function()
         end      
 
         grid:update(dt)  
+        hud:update(dt)
     end
 
     local draw = function(self, pass)
+        pass:setDepthTest('gequal')
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
                 
         grid:draw(pass)
+        hud:draw(pass)
     end
     
     return setmetatable({
