@@ -109,9 +109,9 @@ Map.new = function(w, h, data)
 
             if i > #data then return nil end
 
-            local x, y = i % w, ceil(i / w)
+            local x, y = (i - 1) % w + 1, ceil(i / w)
 
-            return x + 1, y, data[i]
+            return x, y, data[i]
         end
     end
 

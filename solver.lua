@@ -53,15 +53,22 @@ local function getValidMoves(map)
     local moves = {}
 
     for x, y, value in map:iter() do
+        if map:getValue(x, y) == 0 then goto continue end
+
         for _, dir in ipairs(DIRS) do
             for i = 1, 2 do
                 local move = Move(x, y, dir, i == 1)
 
-                if isValidMove(map, move) then
+                local dx, dy = Direction(dir):unpack()
+                local dx = x + dx * value
+                local dy = y + dy * value
+                if map:inBounds(dx, dy) and map:getValue(dx, dy) ~= 0 then
                     table.insert(moves, move)
                 end
             end
         end
+
+        ::continue::
     end
 
     return moves
