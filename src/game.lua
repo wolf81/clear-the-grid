@@ -29,9 +29,9 @@ Game.new = function()
 
     -- setup camera position & target towards center of the grid
     local cols, rows = map:getSize()
-    local target_x, target_z = cols / 2 * 1.1, -rows * 1.1
+    local target_x, target_z = cols / 2 * 1.1, rows / 2 * 1.1
     local target = Vec3(target_x, 0, target_z)
-    local position = Vec3(target.x, -8, target.z - 8)
+    local position = Vec3(target.x, -8, target.z - 4)
     transform = Mat4():lookAt(position, target, vec3(0, 0, 1))
 
     -- Create a new thread called 'thread' using the code above

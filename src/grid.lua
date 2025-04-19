@@ -73,13 +73,13 @@ Grid.new = function(map)
             pass:send('blendColor', { 1.0, 0.5, 1.0, 1.0 })
             pass:send('blendAmount', info.value)
 
-            pass:plane(x, 0, z - 10, 1, 1, -M_PI_2, 1, 0, 0)
+            pass:plane(x, 0, z, 1, 1, -M_PI_2, 1, 0, 0)
 
             pass:setShader()
 
             -- draw number values slightly above each square
             pass:setColor(0xffffff)
-            pass:text(value, x, -0.0001, z - 10, 1, M_PI_2, 1, 0, 0)
+            pass:text(value, x, -0.0001, z, 1, M_PI_2, 1, 0, 0)
         end
     end
 
