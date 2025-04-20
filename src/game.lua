@@ -68,8 +68,6 @@ Game.new = function()
 
     local delay = 0
 
-    local move = Move.empty()
-
     -- a list of moves when state == 'done' 
     local moves = {}
 
@@ -88,8 +86,6 @@ Game.new = function()
                     end
 
                     if message.type == 'done' then
-                        move = Move.empty()
-
                         -- show whole solution from start?
                         state = 'done'
 
@@ -109,8 +105,7 @@ Game.new = function()
                 if #moves == 0 then
                     state = 'processing'
                 else
-                    local move = table.remove(moves, 1)
-                    map:applyMove(move)
+                    map:applyMove(table.remove(moves, 1))
                 end
 
                 delay = 1.0

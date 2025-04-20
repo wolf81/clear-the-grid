@@ -10,18 +10,8 @@ Move.new = function(x, y, dir, add)
         return x, y, dir, add
     end
 
-    local clone = function(self)
-        return Move(x, y, dir, add)
-    end
-
-    local isEmpty = function(self)
-        return x == 1 and y == 1 and dir == 'U' and add == false
-    end
-
     return setmetatable({
-        clone       = clone,
         unpack      = unpack,
-        isEmpty     = isEmpty,
     }, Move)
 end
 
