@@ -19,41 +19,19 @@ assert(#args == 2, 'Arguments required: channel & map_info')
 
 local channel = args[1]
 
-local DIR_VECTORS = {
-    U = { Direction('U'):unpack() },    
-    D = { Direction('D'):unpack() },    
-    L = { Direction('L'):unpack() },    
-    R = { Direction('R'):unpack() },    
-}
-
-local isValidMove = function(map, move)
-    local x, y, dir, add = move:unpack()
-    local source_value = map:getValue(x, y)
-
-    if source_value == 0 then 
-        return false 
-    end
-
-    local dx, dy = Direction(dir):unpack()
-    local dx = x + dx * source_value
-    local dy = y + dy * source_value
-
-    return map:getValue(dx, dy) ~= 0
-end
-
 local function getValidMoves(map)
     local moves = {}
 
     for x, y, value in map:iter() do
         if value == 0 then goto continue end
 
-        for dir, dir_vector in pairs(DIR_VECTORS) do
+        for dir, dir_vector in pairs(Direction) do
             local dx = x + dir_vector[1] * value
             local dy = y + dir_vector[2] * value
 
             if map:getValue(dx, dy) ~= 0 then
-                table.insert(moves, Move(x, y, dir, true))
-                table.insert(moves, Move(x, y, dir, false))
+                table.insert(moves, { x, y, dir, true  })
+                table.insert(moves, { x, y, dir, false })
             end
         end
 
@@ -101,11 +79,11 @@ local function playMoves(starting_map)
         else
             for _, move in ipairs(valid_moves) do
                 local new_map = map:clone()
-                new_map:applyMove(move)
+                new_map:applyMove(unpack(move))
 
                 channel:push({
                     type = 'test',
-                    data = { move:unpack() },
+                    data = move,
                 })
 
                 local new_moves = { unpack(moves) }
@@ -131,11 +109,4 @@ local best_moves, best_score = playMoves(map)
 profile.stop()
 print(profile.report(20))
 
-local data = {}
-
-for _, move in ipairs(best_moves) do
-    print(move)
-    table.insert(data, { move:unpack() })
-end
-
-channel:push({ type = 'done', data = data })
+channel:push({ type = 'done', data = best_moves })

@@ -57,31 +57,26 @@ Map.new = function(w, h, data)
         return data[i]
     end
 
-    local applyMove = function(self, move)
-        local x, y, dir, add = move:unpack()
+    local applyMove = function(self, x, y, dir, add)
+        if getmetatable(x) == Move then
+            x, y, dir, add = x:unpack()
+        end
+
         local i = (y - 1) * w + x
         local source_value = data[i]
 
         if source_value == 0 then
-            return false, string.format(
-                'The move %s is invalid. The source cell %s,%s is empty.', 
-                move, 
-                x, 
-                y)
+            return false, 'Invalid move, source is 0.'
         end
 
-        local dx, dy = Direction(dir):unpack()
-        local dx = x + dx * source_value
-        local dy = y + dy * source_value
+        local d = Direction[dir]
+        local dx = x + d[1] * source_value
+        local dy = y + d[2] * source_value
         local di = (dy - 1) * w + dx
 
         -- don't allow moves to cells containing 0
         if data[di] == 0 then
-            return false, string.format(
-                'The move %s is invalid. The destination cell %s,%s is empty.', 
-                move,
-                dx,
-                dy)
+            return false, 'Invalid move, destination is 0'
         end
 
         data[i] = 0
