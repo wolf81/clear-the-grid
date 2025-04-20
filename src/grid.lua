@@ -31,7 +31,7 @@ Grid.new = function(map)
 
     local rows, cols = map:getSize()
 
-    local ox, oz = -(rows * 1.1 / 2) * 1.1, -(cols * 1.1)
+    local ox, oz = -(rows * 1.1 / 2) * 1.1, -(cols * 1.1 / 2)
 
     -- currently active moves
     local moves = {}
@@ -88,7 +88,7 @@ Grid.new = function(map)
         pass:translate(ox, 0, oz)
 
         for col, row, value in map:iter() do
-            local x, z = col * 1.1, (rows - row) * 1.1
+            local x, z = col * 1.1, row * 1.1
 
             pass:setShader(shader)
 
