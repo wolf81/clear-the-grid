@@ -6,6 +6,9 @@ local lovr = {
     math        = require 'lovr.math',
 }
 
+local profile = require 'lib.profile.profile'
+profile.start()
+
 require 'src.dependencies'
 
 local args = {...}
@@ -140,6 +143,9 @@ local map_info = args[2]
 local map = Map(map_info.w, map_info.h, map_info.data)
 
 local best_moves, best_score = playMoves(map)
+
+profile.stop()
+print(profile.report(20))
 
 local data = {}
 

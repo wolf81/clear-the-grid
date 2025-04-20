@@ -1,0 +1,3 @@
+[submodule "lib/profile"]
+	path = lib/profile
+	url = https://github.com/wolf81/profile.lua.git
