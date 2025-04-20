@@ -74,20 +74,19 @@ Map.new = function(w, h, data)
         local dy = y + d[2] * source_value
         local di = (dy - 1) * w + dx
 
-        -- don't allow moves to cells containing 0
         if data[di] == 0 then
             return false, 'Invalid move, destination is 0'
         end
 
+        -- apply the move
         data[i] = 0
-
         if add then
             data[di] = data[di] + source_value
         else
             data[di] = abs(data[di] - source_value)
         end
 
-        -- adjust score for updated cells
+        -- adjust score
         score = score - 1
         if data[di] == 0 then
             score = score - 1
