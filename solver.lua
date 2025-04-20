@@ -56,7 +56,7 @@ local function getValidMoves(map)
     local moves = {}
 
     for x, y, value in map:iter() do
-        if map:getValue(x, y) == 0 then goto continue end
+        if value == 0 then goto continue end
 
         for _, dir in ipairs(DIRS) do
             for _, move in ipairs({ 
@@ -69,7 +69,6 @@ local function getValidMoves(map)
                 if map:inBounds(dx, dy) and map:getValue(dx, dy) ~= 0 then
                     table.insert(moves, move)
                 end
-
             end
         end
 
