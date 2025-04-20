@@ -22,19 +22,23 @@ assert(#args == 2, 'Arguments required: channel & map_info')
 
 local channel = args[1]
 
-local function getHighValueCells(map)
+local function getHighValueCells(map, threshold)
+    threshold = threshold or 10
+
     local cells = {}
 
+    local i = 1
+
     for x, y, value in map:iter() do
-        -- TODO: should determine more dynamically
-        if value > 5 then
-            table.insert(cells, { x = x, y = y, value = value })
+        if value > threshold then
+            cells[i] = { x = x, y = y, value = value }
+            i = i + 1
         end
     end
 
     table.sort(cells, function(a, b) return a.value > b.value end)
 
-    return cells -- descending order
+    return cells
 end
 
 local function getValidMoves(map)
@@ -62,25 +66,26 @@ end
 local function getReducersForCell(map, tx, ty)
     local reducers = {}
 
-    for x, y, value in map:iter() do
-        if value == 0 then goto continue end
+    local map_w, map_h = map:getSize()
 
-        local dx = tx - x
-        local dy = ty - y
+    -- check row
+    for x = 1, map_w do
+        if x == tx or map:getValue(x, ty) == 0 then goto continue end
 
-        -- Same column
-        if x == tx and math.abs(dy) == value then
-            local dir = dy > 0 and 'D' or 'U'
-            table.insert(reducers, { x, y, dir, true  })
-            table.insert(reducers, { x, y, dir, false })
-        end
+        local dir = (tx - x) > 0 and 'R' or 'L'
+        table.insert(reducers, { x, ty, dir, true  })
+        table.insert(reducers, { x, ty, dir, false })
 
-        -- Same row
-        if y == ty and math.abs(dx) == value then
-            local dir = dx > 0 and 'R' or 'L'
-            table.insert(reducers, { x, y, dir, true  })
-            table.insert(reducers, { x, y, dir, false })
-        end
+        ::continue::
+    end
+
+    -- check column
+    for y = 1, map_h do
+        if y == ty or map:getValue(tx, y) == 0 then goto continue end
+
+        local dir = (ty - y) > 0 and 'D' or 'U'
+        table.insert(reducers, { tx, y, dir, true  })
+        table.insert(reducers, { tx, y, dir, false })
 
         ::continue::
     end
@@ -99,7 +104,7 @@ local function getPrioritizedMoves(map)
             seen[key] = true
             table.insert(moves, move)
         end
-  end
+    end
 
     for i, cell in ipairs(getHighValueCells(map)) do
         local reducers = getReducersForCell(map, cell.x, cell.y)
@@ -113,7 +118,7 @@ local function getPrioritizedMoves(map)
         insertUnique(move)
     end
 
-    return valid_moves
+    return moves
 end
 
 local function playMoves(starting_map)

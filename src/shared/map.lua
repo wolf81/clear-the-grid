@@ -72,6 +72,10 @@ Map.new = function(w, h, data)
         local dy = y + d[2] * source_value
         local di = (dy - 1) * w + dx
 
+        if dx < 1 or dx > w or dy < 1 or dy > h then
+            return false, 'Invalid move, out of bounds.'
+        end
+
         if data[di] == 0 then
             return false, 'Invalid move, destination is 0'
         end
