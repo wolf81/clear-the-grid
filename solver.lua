@@ -72,7 +72,7 @@ local function playMoves(starting_map)
                 print('Solution found!')
 
                 best_score = score
-                best_moves = { unpack(moves) }
+                best_moves = moves
 
                 break
             end

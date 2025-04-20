@@ -14,7 +14,9 @@ local loadLevel = function(index)
 end 
 
 Game.new = function()
-    local map = loadLevel(15)
+    local level = 16
+
+    local map = loadLevel(level)
     print(map)
 
     local skybox_texture = lovr.graphics.newTexture({
@@ -35,7 +37,7 @@ Game.new = function()
     local grid = Grid(map)
 
     local hud = Hud()
-    hud:setLevel(15)
+    hud:setLevel(level)
 
     local state = 'processing' -- 'done'
 
@@ -90,7 +92,9 @@ Game.new = function()
                         state = 'done'
 
                         for _, raw_move in ipairs(message.data) do
-                            table.insert(moves, Move(unpack(raw_move)))
+                            local move = Move(unpack(raw_move))
+                            print(move)
+                            table.insert(moves, move)
                         end
 
                         grid:setSolution(moves)
@@ -121,6 +125,9 @@ Game.new = function()
     end
 
     local draw = function(self, pass)
+        -- skip rendering unless in foreground
+        if not lovr.system.isWindowFocused() then return end
+
         pass:setProjection(1, perspective)
         pass:setViewPose(1, transform, true)
 
