@@ -50,11 +50,9 @@ Map.new = function(w, h, data)
     end
 
     local getValue = function(self, x, y)
-        if x < 1 or x > w or y < 1 or y > h then return 0 end
+        if not (x >= 1 and x <= w and y >= 1 and y <= h) then return 0 end
 
-        local i = (y - 1) * w + x
-
-        return data[i]
+        return data[(y - 1) * w + x]
     end
 
     local applyMove = function(self, x, y, dir, add)
@@ -100,12 +98,12 @@ Map.new = function(w, h, data)
     end
 
     local iter = function(self)
-        local i = 0
+        local i, length = 0, #data
 
         return function()
             i = i + 1
 
-            if i > #data then return nil end
+            if i > length then return nil end
 
             local x, y = (i - 1) % w + 1, ceil(i / w)
 
