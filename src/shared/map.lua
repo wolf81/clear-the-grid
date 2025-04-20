@@ -12,6 +12,12 @@ Map.new = function(w, h, data)
         data = { unpack(data) }
     end
 
+    local score = 0
+
+    for i = 1, #data do
+        if data[i] ~= 0 then score = score + 1 end
+    end
+
     local hash = nil
 
     local getHash = function(self)
@@ -44,7 +50,10 @@ Map.new = function(w, h, data)
     end
 
     local getValue = function(self, x, y)
+        if x < 1 or x > w or y < 1 or y > h then return 0 end
+
         local i = (y - 1) * w + x
+
         return data[i]
     end
 
@@ -66,14 +75,6 @@ Map.new = function(w, h, data)
         local dy = y + dy * source_value
         local di = (dy - 1) * w + dx
 
-        if not self:inBounds(dx, dy) then
-            return false, string.format(
-                'The move %s is invalid. The destination cell %s,%s is outside the grid boundaries.', 
-                move, 
-                dx, 
-                dy)
-        end
-
         -- don't allow moves to cells containing 0
         if data[di] == 0 then
             return false, string.format(
@@ -84,21 +85,24 @@ Map.new = function(w, h, data)
         end
 
         data[i] = 0
+
         if add then
             data[di] = data[di] + source_value
         else
             data[di] = abs(data[di] - source_value)
         end
 
-        return true
-    end
-
-    local isSolved = function(self)
-        for _, _, value in self:iter() do
-            if value ~= 0 then return false end
+        -- adjust score for updated cells
+        score = score - 1
+        if data[di] == 0 then
+            score = score - 1
         end
 
         return true
+    end
+
+    local getScore = function(self)
+        return score
     end
 
     local iter = function(self)
@@ -115,10 +119,6 @@ Map.new = function(w, h, data)
         end
     end
 
-    local inBounds = function(self, x, y)
-        return x >= 1 and x <= w and y >= 1 and y <= h
-    end
-
     return setmetatable({
         iter        = iter,
         clone       = clone,
@@ -127,10 +127,9 @@ Map.new = function(w, h, data)
         getArea     = getArea,
         getData     = getData,
         getHash     = getHash,
-        inBounds    = inBounds,
         getValue    = getValue,
         toString    = toString,
-        isSolved    = isSolved,
+        getScore    = getScore,
         applyMove   = applyMove,
     }, Map)
 end

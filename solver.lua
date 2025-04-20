@@ -19,19 +19,12 @@ assert(#args == 2, 'Arguments required: channel & map_info')
 
 local channel = args[1]
 
-local DIRS = { 'U', 'D', 'L', 'R' }
-
-local evaluateMap = function(map)
-    local result = 0
-
-    for x, y, value in map:iter() do
-        if value > 0 then
-            result = result + 1
-        end
-    end
-
-    return result
-end
+local DIR_VECTORS = {
+    U = { Direction('U'):unpack() },    
+    D = { Direction('D'):unpack() },    
+    L = { Direction('L'):unpack() },    
+    R = { Direction('R'):unpack() },    
+}
 
 local isValidMove = function(map, move)
     local x, y, dir, add = move:unpack()
@@ -45,11 +38,7 @@ local isValidMove = function(map, move)
     local dx = x + dx * source_value
     local dy = y + dy * source_value
 
-    if map:inBounds(dx, dy) then
-        return map:getValue(dx, dy) ~= 0
-    end
-
-    return false
+    return map:getValue(dx, dy) ~= 0
 end
 
 local function getValidMoves(map)
@@ -58,17 +47,13 @@ local function getValidMoves(map)
     for x, y, value in map:iter() do
         if value == 0 then goto continue end
 
-        for _, dir in ipairs(DIRS) do
-            for _, move in ipairs({ 
-                Move(x, y, dir, true), 
-                Move(x, y, dir, false)}) do
+        for dir, dir_vector in pairs(DIR_VECTORS) do
+            local dx = x + dir_vector[1] * value
+            local dy = y + dir_vector[2] * value
 
-                local dx, dy = Direction(dir):unpack()
-                local dx = x + dx * value
-                local dy = y + dy * value
-                if map:inBounds(dx, dy) and map:getValue(dx, dy) ~= 0 then
-                    table.insert(moves, move)
-                end
+            if map:getValue(dx, dy) ~= 0 then
+                table.insert(moves, Move(x, y, dir, true))
+                table.insert(moves, Move(x, y, dir, false))
             end
         end
 
@@ -98,7 +83,7 @@ local function playMoves(starting_map)
 
         if #valid_moves == 0 then
             -- Terminal state: evaluate the map
-            local score = evaluateMap(map)
+            local score = map:getScore()
 
             if score < best_score then
                 best_score = score
