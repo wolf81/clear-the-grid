@@ -1,24 +1,37 @@
+require 'src.constants'
 require 'src.dependencies'
-
-local Game = require 'src.game'
 
 -- show output while running
 io.stdout:setvbuf('no')
 
-function lovr.load(args)
-    game = Game()
+local projector = Projector(VIRTUAL_W, VIRTUAL_H)
+print(VIRTUAL_W, VIRTUAL_H)
+
+function love.load(args)
+
 end
 
-function lovr.update(dt)
-    game:update(dt)
+function love.resize(w, h)
+    local w, h = love.graphics.getDimensions()
+    projector:resize(w, h)
 end
 
-function lovr.draw(pass)
-    game:draw(pass)
+function love.update(dt)
+
 end
 
-function lovr.keyreleased(key, scancode)
+function love.draw()
+    projector:attach()    
+
+    -- Your game drawing code
+    love.graphics.setColor(1, 0, 0)
+    love.graphics.rectangle('fill', 0, 0, 2000, 2000)
+
+    projector:detach()
+end
+
+function love.keyreleased(key, scancode)
     if key == 'escape' then
-        lovr.event.quit()
+        love.event.quit()
     end
 end

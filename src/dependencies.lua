@@ -1,5 +1,4 @@
-Direction   = require 'src.shared.direction'
-Map         = require 'src.shared.map'
-Move        = require 'src.shared.move'
-
+Direction   = require 'src.direction'
+Move        = require 'src.move'
 Utils       = require 'src.utils'
+Projector   = require 'src.projector'

@@ -1,4 +1,4 @@
-local gmatch, random = string.gmatch, math.random
+local gmatch = string.gmatch
 
 local M = {}
 
