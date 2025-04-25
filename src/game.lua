@@ -1,7 +1,9 @@
 local Board = require 'src.board'
-local Hud = require 'src.hud'
 
 local Game = {}
+
+local BG_COLOR      = { 1, 1, 1, 1 }
+local GRID_COLOR    = { 0.97, 0.97, 0.97, 1.0 }
 
 local loadGrid = function(index)
     local path = string.format('dat/0XX/%d.txt', index)
@@ -20,6 +22,23 @@ local loadGrid = function(index)
     print(grid)
 
     return grid
+end
+
+local function newBackgroundImage()
+    return ImageGenerator.render(VIRTUAL_W, VIRTUAL_H, function() 
+        do
+            love.graphics.setLineWidth(1)
+            love.graphics.setColor(GRID_COLOR)
+
+            for x = -16, VIRTUAL_W, 32 do
+                love.graphics.line(x, 0, x, VIRTUAL_H)            
+            end
+
+            for y = -16, VIRTUAL_H, 32 do
+                love.graphics.line(0, y, VIRTUAL_W, y)            
+            end
+        end
+    end)
 end 
 
 Game.new = function()
@@ -27,20 +46,20 @@ Game.new = function()
 
     local grid = loadGrid(level)
 
+    -- draw a grid over the whole screen, visually like graph paper
+    local background = newBackgroundImage()
+
     -- a board is a visual representation of a grid
     local board = Board(grid)
 
-    local hud = Hud()
-
     local update = function(self, dt)
         board:update(dt)
-        hud:update()
     end
 
     local draw = function(self)
-        board:draw()
+        love.graphics.draw(background)
 
-        hud:draw()
+        board:draw()
     end
     
     return setmetatable({

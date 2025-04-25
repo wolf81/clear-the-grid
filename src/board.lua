@@ -2,11 +2,10 @@ local GridCursor = require 'src.grid_cursor'
 
 local Board = {}
 
-local BG_COLOR = { 0.99, 0.99, 0.99, 1.0 }
-local FG_COLOR = { 0.2, 0.2, 0.8, 1.0 }
-local GRID_COLOR = { 0.5, 0.5, 0.5, 1.0 }
-local MARGIN_X = 64
-local MARGIN_COLOR = { 1.0, 0.2, 0.2, 1.0 }
+local FG_COLOR      = { 0.2, 0.2, 0.8, 1.0 }
+local GRID_COLOR    = { 0.5, 0.5, 0.5, 1.0 }
+local MARGIN_COLOR  = { 1.0, 0.2, 0.2, 1.0 }
+local MARGIN_X      = 64
 
 Board.new = function(grid)
     -- determine x and y offsets for drawing the grid
@@ -25,9 +24,6 @@ Board.new = function(grid)
     end
 
     local draw = function(self)
-        -- set background color
-        love.graphics.clear(BG_COLOR)
-
         -- move grid to center of screen
         love.graphics.translate(ox, oy)
 
