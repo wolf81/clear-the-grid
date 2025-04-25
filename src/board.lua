@@ -3,7 +3,8 @@ local GridCursor = require 'src.grid_cursor'
 local Board = {}
 
 local BG_COLOR = { 0.99, 0.99, 0.99, 1.0 }
-local GRID_COLOR = { 0.6, 0.6, 0.6, 1.0 }
+local FG_COLOR = { 0.2, 0.2, 0.8, 1.0 }
+local GRID_COLOR = { 0.5, 0.5, 0.5, 1.0 }
 local MARGIN_X = 64
 local MARGIN_COLOR = { 1.0, 0.2, 0.2, 1.0 }
 
@@ -55,6 +56,12 @@ Board.new = function(grid)
             love.graphics.translate(0.5, 0.5)
 
             for x, y, value in grid:iter() do
+                if value == 0 then
+                    love.graphics.setColor(0.7, 0.7, 0.7, 1.0)
+                else
+                    love.graphics.setColor(FG_COLOR)
+                end
+
                 local text = tostring(value)
                 local text_w = font:getWidth(text)
                 local text_x = (x - 1) * GRID_SIZE + (GRID_SIZE - text_w) / 2

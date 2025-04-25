@@ -20,7 +20,7 @@ GridCursor.new = function(grid)
         time = time + dt
 
         -- pulsate scale with sine wave
-        scale = 1 + 0.1 * sin(time * 2) -- 10% scale pulsation
+        scale = 0.95 + 0.1 * sin(time * 2) -- 10% scale pulsation
 
         -- pulsate alpha between 0.4 and 1.0
         alpha = 0.4 + 0.6 * (0.5 + 0.5 * sin(time * 2))
