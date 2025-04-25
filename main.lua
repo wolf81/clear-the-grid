@@ -1,11 +1,15 @@
 require 'src.constants'
 require 'src.dependencies'
 
+local Game = require 'src.game'
+
 -- show output while running
 io.stdout:setvbuf('no')
 
 local projector = Projector(VIRTUAL_W, VIRTUAL_H)
 print(VIRTUAL_W, VIRTUAL_H)
+
+local game = Game(1)
 
 function love.load(args)
 
@@ -17,15 +21,13 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
-
+    game:update(dt)
 end
 
 function love.draw()
     projector:attach()    
 
-    -- Your game drawing code
-    love.graphics.setColor(1, 0, 0)
-    love.graphics.rectangle('fill', 0, 0, 2000, 2000)
+    game:draw()
 
     projector:detach()
 end
