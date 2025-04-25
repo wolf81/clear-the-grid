@@ -16,12 +16,20 @@ InputManager.new = function()
         released[key] = true
     end
 
-    local isPressed = function(self, key)
-        return pressed[key] == true
+    local isPressed = function(self, ...)
+        for _, key in ipairs({...}) do
+            if pressed[key] then return true end
+        end
+
+        return false
     end
 
-    local isReleased = function(self, key)
-        return released[key] == true
+    local isReleased = function(self, ...)
+        for _, key in ipairs({...}) do
+            if released[key] then return true end
+        end
+        
+        return false
     end
     
     return setmetatable({

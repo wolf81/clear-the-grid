@@ -22,20 +22,20 @@ Board.new = function(grid)
 
     local update = function(self, dt)
         local input_manager = ServiceLocator.get(InputManager)
-        
-        if input_manager:isReleased('right') then
+
+        if input_manager:isReleased('right', 'd') then
             focus.x = min(max(focus.x + 1, 1), w)
         end
 
-        if input_manager:isReleased('left') then
+        if input_manager:isReleased('left', 'a') then
             focus.x = min(max(focus.x - 1, 1), w)
         end
 
-        if input_manager:isReleased('up') then
+        if input_manager:isReleased('up', 'w') then
             focus.y = min(max(focus.y - 1, 1), h)
         end
 
-        if input_manager:isReleased('down') then
+        if input_manager:isReleased('down', 's') then
             focus.y = min(max(focus.y + 1, 1), h)
         end
     end
