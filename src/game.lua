@@ -17,7 +17,7 @@ local loadGrid = function(index)
 
     -- TODO: the grid metatable should have a __tostring method
     -- from the C-side it's nicer if there is a toString method
-    grid:print()
+    print(grid)
 
     return grid
 end 
@@ -39,6 +39,7 @@ Game.new = function()
 
     local draw = function(self)
         board:draw()
+
         hud:draw()
     end
     

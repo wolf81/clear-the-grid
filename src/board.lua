@@ -1,6 +1,6 @@
 local Board = {}
 
-local GRID_SIZE = 32
+local GRID_SIZE = 48
 local GRID_COLOR = { 0.8, 0.8, 0.8, 1.0 }
 local MARGIN_X = 64
 local MARGIN_COLOR = { 1.0, 0.2, 0.2, 1.0 }
@@ -10,6 +10,9 @@ Board.new = function(grid)
 
     local ox = math.floor((VIRTUAL_W - w * GRID_SIZE) / 2)
     local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
+
+    local font = love.graphics.getFont()
+    local text_h = font:getHeight()
 
     local update = function(self, dt)
         -- body
@@ -27,6 +30,14 @@ Board.new = function(grid)
 
         for y = 0, h * GRID_SIZE, GRID_SIZE do
             love.graphics.line(0, y, w * GRID_SIZE, y)            
+        end
+
+        for x, y, value in grid:iter() do
+            local text = tostring(value)
+            local text_w = font:getWidth(text)
+            local text_x = (x - 1) * GRID_SIZE + (GRID_SIZE - text_w) / 2
+            local text_y = (y - 1) * GRID_SIZE + (GRID_SIZE - text_h) / 2
+            love.graphics.print(text, text_x, text_y)
         end
     end
 
