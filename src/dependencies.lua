@@ -1,6 +1,9 @@
-Direction   = require 'src.direction'
-Move        = require 'src.move'
-Utils       = require 'src.utils'
-Projector   = require 'src.projector'
+Direction       = require 'src.direction'
+Move            = require 'src.move'
 
-ctg         = require 'libctg'
+Projector       = require 'src.projector'
+InputManager    = require 'src.input_manager'
+ServiceLocator  = require 'src.service_locator'
+Utils           = require 'src.utils'
+
+ctg             = require 'libctg'

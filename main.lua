@@ -9,10 +9,12 @@ io.stdout:setvbuf('no')
 local projector = Projector(VIRTUAL_W, VIRTUAL_H)
 print(VIRTUAL_W, VIRTUAL_H)
 
+local input_manager = InputManager()
+
 local game = Game(1)
 
 function love.load(args)
-
+    ServiceLocator.register(input_manager)
 end
 
 function love.resize(w, h)
@@ -22,6 +24,8 @@ end
 
 function love.update(dt)
     game:update(dt)
+
+    input_manager:update(dt)
 end
 
 function love.draw()
@@ -33,7 +37,13 @@ function love.draw()
 end
 
 function love.keyreleased(key, scancode)
+    input_manager:keyReleased(key)
+
     if key == 'escape' then
         love.event.quit()
     end
+end
+
+function love.keypressed(key, scancode, isrepeat)
+    input_manager:keyPressed(key)
 end

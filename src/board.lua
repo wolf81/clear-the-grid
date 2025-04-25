@@ -1,3 +1,5 @@
+local min, max = math.min, math.max
+
 local Board = {}
 
 local BG_COLOR = { 0.99, 0.99, 0.99, 1.0 }
@@ -16,8 +18,26 @@ Board.new = function(grid)
     local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 18)
     local text_h = font:getHeight()
 
+    local focus = { x = 1, y = 1 }
+
     local update = function(self, dt)
-        -- body
+        local input_manager = ServiceLocator.get(InputManager)
+        
+        if input_manager:isReleased('right') then
+            focus.x = min(max(focus.x + 1, 1), w)
+        end
+
+        if input_manager:isReleased('left') then
+            focus.x = min(max(focus.x - 1, 1), w)
+        end
+
+        if input_manager:isReleased('up') then
+            focus.y = min(max(focus.y - 1, 1), h)
+        end
+
+        if input_manager:isReleased('down') then
+            focus.y = min(max(focus.y + 1, 1), h)
+        end
     end
 
     local draw = function(self)
@@ -45,6 +65,9 @@ Board.new = function(grid)
         do 
             love.graphics.setFont(font)
 
+            -- push state, as we will translate by half a pixel, just for text rendering
+            love.graphics.push()
+
             -- translate half a pixel for clearer font rendering
             love.graphics.translate(0.5, 0.5)
 
@@ -55,6 +78,18 @@ Board.new = function(grid)
                 local text_y = (y - 1) * GRID_SIZE + (GRID_SIZE - text_h) / 2
                 love.graphics.print(text, text_x, text_y)
             end
+
+            -- pop back to previous state, reverting half pixel translation
+            love.graphics.pop()
+        end
+
+        -- draw focus rectangle
+        do
+            love.graphics.setColor(MARGIN_COLOR)
+
+            love.graphics.rectangle('line', (focus.x - 1) * GRID_SIZE, (focus.y - 1) * GRID_SIZE, GRID_SIZE, GRID_SIZE)
+
+            love.graphics.setColor(BG_COLOR)
         end
     end
 
