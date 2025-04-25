@@ -1,9 +1,8 @@
-local min, max = math.min, math.max
+local GridCursor = require 'src.grid_cursor'
 
 local Board = {}
 
 local BG_COLOR = { 0.99, 0.99, 0.99, 1.0 }
-local GRID_SIZE = 48
 local GRID_COLOR = { 0.6, 0.6, 0.6, 1.0 }
 local MARGIN_X = 64
 local MARGIN_COLOR = { 1.0, 0.2, 0.2, 1.0 }
@@ -14,30 +13,14 @@ Board.new = function(grid)
     local ox = math.floor((VIRTUAL_W - w * GRID_SIZE) / 2)
     local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
 
+    local cursor = GridCursor(grid)
+
     -- set font
     local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 18)
     local text_h = font:getHeight()
 
-    local focus = { x = 1, y = 1 }
-
     local update = function(self, dt)
-        local input_manager = ServiceLocator.get(InputManager)
-
-        if input_manager:isReleased('right', 'd') then
-            focus.x = min(max(focus.x + 1, 1), w)
-        end
-
-        if input_manager:isReleased('left', 'a') then
-            focus.x = min(max(focus.x - 1, 1), w)
-        end
-
-        if input_manager:isReleased('up', 'w') then
-            focus.y = min(max(focus.y - 1, 1), h)
-        end
-
-        if input_manager:isReleased('down', 's') then
-            focus.y = min(max(focus.y + 1, 1), h)
-        end
+        cursor:update(dt)
     end
 
     local draw = function(self)
@@ -83,14 +66,11 @@ Board.new = function(grid)
             love.graphics.pop()
         end
 
-        -- draw focus rectangle
-        do
-            love.graphics.setColor(MARGIN_COLOR)
+        -- draw cursor
+        cursor:draw()
 
-            love.graphics.rectangle('line', (focus.x - 1) * GRID_SIZE, (focus.y - 1) * GRID_SIZE, GRID_SIZE, GRID_SIZE)
-
-            love.graphics.setColor(BG_COLOR)
-        end
+        -- reset color to white
+        love.graphics.setColor(1, 1, 1, 1)
     end
 
     return setmetatable({
