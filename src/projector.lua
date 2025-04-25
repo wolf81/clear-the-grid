@@ -4,7 +4,7 @@ Projector.new = function(virtual_w, virtual_h)
     local canvas = love.graphics.newCanvas(virtual_w, virtual_h)
 
     local scale = 1
-    local ox, oy = 0, 0 -- offsets
+    local ox, oy = 0, 0 -- offsets for letterboxing
 
     local resize = function(self, window_w, window_h)
         local sx, sy = window_w / virtual_w, window_h / virtual_h
@@ -37,6 +37,7 @@ Projector.new = function(virtual_w, virtual_h)
         love.graphics.pop()
     end
     
+    -- setup initial size
     resize(nil, love.graphics.getWidth(), love.graphics.getHeight())
 
     return setmetatable({

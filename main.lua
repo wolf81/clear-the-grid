@@ -3,22 +3,26 @@ require 'src.dependencies'
 
 local Game = require 'src.game'
 
--- show output while running
+-- don't buffer output while app is running
+-- this way we see immediate feedback in e.g. Sublime Text console - not after app is closed
 io.stdout:setvbuf('no')
 
+-- aspect fit a virtual view to the window
 local projector = Projector(VIRTUAL_W, VIRTUAL_H)
-print(VIRTUAL_W, VIRTUAL_H)
 
+-- keep track of user input
 local input_manager = InputManager()
 
 local game = Game(1)
 
 function love.load(args)
     ServiceLocator.register(input_manager)
+
+    -- enable the OS sending repeated key presses while key is down
+    love.keyboard.setKeyRepeat(true)
 end
 
 function love.resize(w, h)
-    local w, h = love.graphics.getDimensions()
     projector:resize(w, h)
 end
 

@@ -17,14 +17,13 @@ local loadGrid = function(index)
         error(err)
     end
 
-    -- TODO: the grid metatable should have a __tostring method
-    -- from the C-side it's nicer if there is a toString method
     print(grid)
 
     return grid
 end
 
 local function newBackgroundImage()
+    -- create a background image representing graph paper
     return ImageGenerator.render(VIRTUAL_W, VIRTUAL_H, function() 
         do
             love.graphics.setLineWidth(1)

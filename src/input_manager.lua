@@ -4,8 +4,8 @@ InputManager.new = function()
     local pressed, released = {}, {}
 
     local update = function(self, dt)
-        pressed = {}
         released = {}
+        pressed = {}
     end
 
     local keyPressed = function(self, key) 

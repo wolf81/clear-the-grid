@@ -1,5 +1,6 @@
 local M = {}
 
+-- render to a texture of given width / height
 M.render = function(w, h, func)
     local canvas = love.graphics.newCanvas(w, h)
 

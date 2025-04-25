@@ -27,19 +27,19 @@ GridCursor.new = function(grid)
 
         local input_manager = ServiceLocator.get(InputManager)
 
-        if input_manager:isReleased('right', 'd') then
+        if input_manager:isPressed('right', 'd') then
             x = min(max(x + 1, 1), grid_w)
         end
 
-        if input_manager:isReleased('left', 'a') then
+        if input_manager:isPressed('left', 'a') then
             x = min(max(x - 1, 1), grid_w)
         end
 
-        if input_manager:isReleased('up', 'w') then
+        if input_manager:isPressed('up', 'w') then
             y = min(max(y - 1, 1), grid_h)
         end
 
-        if input_manager:isReleased('down', 's') then
+        if input_manager:isPressed('down', 's') then
             y = min(max(y + 1, 1), grid_h)
         end    
     end
@@ -50,7 +50,9 @@ GridCursor.new = function(grid)
         -- push graphics state for scale and translation
         love.graphics.push()
 
-        love.graphics.translate((x - 1) * GRID_SIZE + GRID_SIZE / 2, (y - 1) * GRID_SIZE + GRID_SIZE / 2)
+        love.graphics.translate(
+            (x - 1) * GRID_SIZE + GRID_SIZE / 2, 
+            (y - 1) * GRID_SIZE + GRID_SIZE / 2)
         love.graphics.scale(scale)
         love.graphics.rectangle('line', -GRID_SIZE / 2, -GRID_SIZE / 2, GRID_SIZE, GRID_SIZE)
 
