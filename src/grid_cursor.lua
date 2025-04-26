@@ -1,8 +1,9 @@
 local min, max, ceil, cos, sin, sqrt    = math.min, math.max, math.ceil, math.cos, math.sin
-local sqrt, atan2                       = math.sqrt, math.atan2
+local sqrt, atan2, band                 = math.sqrt, math.atan2, bit.band
 
 local CURSOR_COLOR = { 1.0, 0.2, 0.2 }
 local BASE_SCALE = 0.96 -- by default cursor is a little bit smaller than GRID_SIZE
+local TRIANGLE_SIZE = ceil(GRID_SIZE / 4)
 
 local STATES = { 
     default     = true, 
@@ -70,6 +71,9 @@ GridCursor.new = function(grid)
     -- keep track of time for animations
     local time = 0.0
 
+    -- optionally show direction pointers
+    local dirs = 0
+
     -- styling for default animation
     local scale, alpha = BASE_SCALE, 1.0
 
@@ -115,10 +119,36 @@ GridCursor.new = function(grid)
             (y - 1) * GRID_SIZE + GRID_SIZE / 2)
         love.graphics.scale(scale)
 
+        local rect_x, rect_y = -GRID_SIZE / 2, -GRID_SIZE / 2
+
         if state == 'default' then
-            love.graphics.rectangle('line', -GRID_SIZE / 2, -GRID_SIZE / 2, GRID_SIZE, GRID_SIZE)
+            love.graphics.rectangle('line', rect_x, rect_y, GRID_SIZE, GRID_SIZE)
         else
-            drawDottedRectangleLoop(-GRID_SIZE / 2, -GRID_SIZE / 2, GRID_SIZE, GRID_SIZE, 4, 6, time * 10)
+            drawDottedRectangleLoop(rect_x, rect_y, GRID_SIZE, GRID_SIZE, 4, 6, time * 10)
+        end
+
+        if bit.band(dirs, Direction.U) == Direction.U then
+            local x1, x2, x3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
+            local y1, y2 = rect_y - TRIANGLE_SIZE, rect_y - 1
+            love.graphics.polygon('fill', x1, y1, x2, y2, x3, y2)
+        end
+
+        if bit.band(dirs, Direction.D) == Direction.D then
+            local x1, x2, x3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
+            local y1, y2 = rect_y + GRID_SIZE + TRIANGLE_SIZE, rect_y + GRID_SIZE + 1
+            love.graphics.polygon('fill', x1, y1, x2, y2, x3, y2)
+        end
+
+        if bit.band(dirs, Direction.L) == Direction.L then
+            local x1, x2 = rect_x - TRIANGLE_SIZE, rect_x - 1
+            local y1, y2, y3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
+            love.graphics.polygon('fill', x1, y1, x2, y2, x2, y3)
+        end
+
+        if bit.band(dirs, Direction.R) == Direction.R then
+            local x1, x2 = rect_x + GRID_SIZE + 1, rect_x + GRID_SIZE + TRIANGLE_SIZE
+            local y1, y2, y3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
+            love.graphics.polygon('fill', x2, y1, x1, y2, x1, y3)
         end
 
         -- revert scale and translation
@@ -138,12 +168,21 @@ GridCursor.new = function(grid)
         state = state_
     end
 
-    setState(nil, 'default')
+    local showDirs = function(self, dirs_)
+        dirs_ = dirs_ or 0 -- don't show any directions if called without arguments
+
+        if type(dirs_) ~= 'number' then
+            error('Invalid dirs, should be a number composed for Direction flags.')
+        end
+
+        dirs = dirs_
+    end
 
     return setmetatable({
         draw        = draw,
         update      = update,
         setState    = setState,
+        showDirs    = showDirs,
     }, GridCursor)
 end
 

@@ -1,6 +1,6 @@
 return {
-    U = {  0, -1 },
-    D = {  0,  1 },
-    L = { -1,  0 }, 
-    R = {  1,  0 },    
+    U = bit.lshift(1, 0),
+    D = bit.lshift(1, 1),
+    L = bit.lshift(1, 2), 
+    R = bit.lshift(1, 3),
 }
