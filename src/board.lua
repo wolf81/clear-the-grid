@@ -14,8 +14,6 @@ Board.new = function(grid)
     local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
 
     local cursor = GridCursor(grid)
-    -- cursor:setState('highlight')
-    -- cursor:showDirs()
 
     -- set font
     local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 18)
