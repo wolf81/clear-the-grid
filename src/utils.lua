@@ -2,17 +2,6 @@ local gmatch = string.gmatch
 
 local M = {}
 
--- generate a 2-dimensional array with value as default, or 0
-M.newArray = function(length, value)
-    local arr = {}
-
-    for i = 1, length do
-        arr[i] = value or 0
-    end
-
-    return arr
-end
-
 M.splitLines = function(str)
     local lines = {}
     for line in gmatch(str, '([^\n]+)') do
@@ -27,6 +16,16 @@ M.splitChars = function(str)
         table.insert(words, word)
     end
     return words
+end
+
+M.getKeys = function(tbl)
+    local keys = {}
+
+    for key, _ in pairs(tbl) do
+        table.insert(keys, key)
+    end
+
+    return keys
 end
 
 return M
