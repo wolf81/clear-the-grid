@@ -1,4 +1,5 @@
-local GridCursor = require 'src.grid_cursor'
+local GridCursor        = require 'src.grid_cursor'
+local DirectionChooser  = require 'src.direction_chooser'
 
 local Board = {}
 
@@ -7,13 +8,29 @@ local GRID_COLOR    = { 0.5, 0.5, 0.5, 1.0 }
 local MARGIN_COLOR  = { 1.0, 0.2, 0.2, 1.0 }
 local MARGIN_X      = 64
 
+local DIR_INFO = {
+    [Direction.U] = 'U',
+    [Direction.D] = 'D',
+    [Direction.L] = 'L',
+    [Direction.R] = 'R',
+}
+
 Board.new = function(grid)
     -- determine x and y offsets for drawing the grid
     local w, h = grid:getSize()
     local ox = math.floor((VIRTUAL_W - w * GRID_SIZE) / 2)
     local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
 
-    local cursor = GridCursor(grid)
+    local cursor        = GridCursor(grid)
+    local dir_chooser   = DirectionChooser(grid)
+
+    cursor:onStateChange(function() 
+        dir_chooser:setActive(cursor:getState() == 'highlight')
+    end)
+
+    cursor:onCoordChange(function()
+        dir_chooser:setCoord(cursor:getCoord())
+    end)
 
     -- set font
     local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 24)
@@ -21,6 +38,34 @@ Board.new = function(grid)
 
     local update = function(self, dt)
         cursor:update(dt)
+        dir_chooser:update(dt)        
+
+        local input_manager = ServiceLocator.get(InputManager)
+
+        local cursor_state = cursor:getState()
+        if cursor_state == 'highlight' then
+            if input_manager:isReleased('return') then
+                cursor:setState('default')
+
+                local dir = dir_chooser:getDirection()
+                if dir ~= 0 then
+                    local x, y = cursor:getCoord()
+                    grid:applyMove(x, y, DIR_INFO[dir], false)
+                end
+            end
+
+            if input_manager:isReleased('escape') then
+                cursor:setState('default')
+            end
+        end    
+
+        if cursor_state == 'default' then
+            if input_manager:isReleased('return') then
+                if grid:getValue(cursor:getCoord()) ~= 0 then
+                    cursor:setState('highlight')
+                end
+            end
+        end    
     end
 
     local draw = function(self)
@@ -71,6 +116,9 @@ Board.new = function(grid)
 
         -- draw cursor
         cursor:draw()
+
+        -- draw direction chooser
+        dir_chooser:draw()
 
         -- reset color to white
         love.graphics.setColor(1, 1, 1, 1)
