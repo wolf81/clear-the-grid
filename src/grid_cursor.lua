@@ -5,12 +5,29 @@ local CURSOR_COLOR  = { 1.0, 0.2, 0.2 }
 local BASE_SCALE    = 0.96 -- by default cursor is a little bit smaller than GRID_SIZE
 local TRIANGLE_SIZE = ceil(GRID_SIZE / 4)
 
+-- control states
 local STATES = { 
     default     = true, 
     highlight   = true,
 }
 
+-- map direction keys (as used in libctg) to Direction flags
+local DIR_INFO = {
+    L = Direction.L,
+    R = Direction.R,
+    U = Direction.U,
+    D = Direction.D,
+}
+
 local GridCursor = {}
+
+local function getDirName(dir)
+    for dir_name, dir_value in pairs(DIR_INFO) do
+        if dir == dir_value then return dir_name end
+    end
+
+    error(string.format('Invalid direction: %s', dir))
+end
 
 local function drawDottedLine(x1, y1, x2, y2, dot_length, gap_length, offset)
     local dx = x2 - x1
@@ -113,16 +130,10 @@ end
 local function getValidDirs(grid, x, y)
     local dirs = {}
 
-    for _, dir in ipairs({ Direction.L, Direction.R, Direction.U, Direction.D }) do
-        local cx, cy = findPlayableCell(grid, x, y, dir)
-
-        if cx == x and cy == y then goto continue end
-
-        if grid:getValue(cx, cy) ~= 0 then
-            dirs[dir] = { cx, cy }
+    for dir_name, dir in pairs(DIR_INFO) do
+        if grid:isValidMove(x, y, dir_name) then
+            dirs[dir] = true
         end
-
-        ::continue::
     end
     
     return dirs
@@ -140,8 +151,11 @@ GridCursor.new = function(grid)
     -- keep track of time for animations
     local time = 0.0
 
-    -- optionally show direction pointers
-    local dirs = 0
+    -- the pointer direction or 0 to hide pointer
+    local dir = 0
+
+    -- possible directions for direction pointers
+    local valid_dirs = 0
 
     -- styling for default animation
     local scale, alpha = BASE_SCALE, 1.0
@@ -161,7 +175,7 @@ GridCursor.new = function(grid)
         local input_manager = ServiceLocator.get(InputManager)
 
         if state == 'default' then
-            dirs = 0
+            dir = 0
 
             if input_manager:isPressed('right', 'd') then
                 x, y = findPlayableCell(grid, x, y, Direction.R)
@@ -181,29 +195,27 @@ GridCursor.new = function(grid)
         end
 
         if state == 'highlight' then
-            local valid_dirs = getValidDirs(grid, x, y)
-
             if input_manager:isPressed('right', 'd') then
                 if valid_dirs[Direction.R] then
-                    dirs = Direction.R
+                    dir = Direction.R
                 end
             end
 
             if input_manager:isPressed('left', 'a') then
                 if valid_dirs[Direction.L] then
-                    dirs = Direction.L
+                    dir = Direction.L
                 end
             end
 
             if input_manager:isPressed('up', 'w') then
                 if valid_dirs[Direction.U] then
-                    dirs = Direction.U
+                    dir = Direction.U
                 end
             end
 
             if input_manager:isPressed('down', 's') then
                 if valid_dirs[Direction.D] then
-                    dirs = Direction.D
+                    dir = Direction.D
                 end
             end
         end
@@ -211,8 +223,16 @@ GridCursor.new = function(grid)
         if input_manager:isReleased('return') then
             if state == 'default' and grid:getValue(x, y) ~= 0 then
                 self:setState('highlight')
+
+                valid_dirs = getValidDirs(grid, x, y)
             else
+                if dir ~= 0 then
+                    grid:applyMove(x, y, getDirName(dir), false)
+                end
+
                 self:setState('default')
+
+                valid_dirs = 0
             end
         end 
 
@@ -240,25 +260,25 @@ GridCursor.new = function(grid)
             drawDottedRectangleLoop(rect_x, rect_y, GRID_SIZE, GRID_SIZE, 4, 6, time * 10)
         end
 
-        if bit.band(dirs, Direction.U) == Direction.U then
+        if dir == Direction.U then
             local x1, x2, x3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
             local y1, y2 = rect_y - TRIANGLE_SIZE, rect_y - 1
             love.graphics.polygon('fill', x1, y1, x2, y2, x3, y2)
         end
 
-        if bit.band(dirs, Direction.D) == Direction.D then
+        if dir == Direction.D then
             local x1, x2, x3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
             local y1, y2 = rect_y + GRID_SIZE + TRIANGLE_SIZE, rect_y + GRID_SIZE + 1
             love.graphics.polygon('fill', x1, y1, x2, y2, x3, y2)
         end
 
-        if bit.band(dirs, Direction.L) == Direction.L then
+        if dir == Direction.L then
             local x1, x2 = rect_x - TRIANGLE_SIZE, rect_x - 1
             local y1, y2, y3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
             love.graphics.polygon('fill', x1, y1, x2, y2, x2, y3)
         end
 
-        if bit.band(dirs, Direction.R) == Direction.R then
+        if dir == Direction.R then
             local x1, x2 = rect_x + GRID_SIZE + 1, rect_x + GRID_SIZE + TRIANGLE_SIZE
             local y1, y2, y3 = 0, -TRIANGLE_SIZE / 2, TRIANGLE_SIZE / 2
             love.graphics.polygon('fill', x2, y1, x1, y2, x1, y3)
@@ -281,21 +301,10 @@ GridCursor.new = function(grid)
         end
     end
 
-    local showDirs = function(self, dirs_)
-        dirs_ = dirs_ or 0 -- don't show any directions if called without arguments
-
-        if type(dirs_) ~= 'number' then
-            error('Invalid dirs, should be a number composed for Direction flags.')
-        end
-
-        dirs = dirs_
-    end
-
     return setmetatable({
         draw        = draw,
         update      = update,
         setState    = setState,
-        showDirs    = showDirs,
     }, GridCursor)
 end
 
