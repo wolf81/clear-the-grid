@@ -16,7 +16,7 @@ Board.new = function(grid)
     local cursor = GridCursor(grid)
 
     -- set font
-    local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 18)
+    local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 24)
     local text_h = font:getHeight()
 
     local update = function(self, dt)

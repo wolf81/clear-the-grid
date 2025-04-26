@@ -2,8 +2,6 @@ local Projector = {}
 
 Projector.new = function(virtual_w, virtual_h)
     local canvas = love.graphics.newCanvas(virtual_w, virtual_h)
-    -- use nearest filter for a pixelated graphics style
-    canvas:setFilter('nearest', 'nearest')
 
     local scale = 1
     local ox, oy = 0, 0 -- offsets for letterboxing
