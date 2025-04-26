@@ -42,10 +42,6 @@ end
 
 function love.keyreleased(key, scancode)
     input_manager:keyReleased(key)
-
-    if key == 'escape' then
-        love.event.quit()
-    end
 end
 
 function love.keypressed(key, scancode, isrepeat)
