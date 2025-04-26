@@ -59,6 +59,57 @@ function drawDottedRectangleLoop(x, y, w, h, dot_length, gap_length, offset)
     end
 end
 
+-- TODO: would be nicer to represent the non-0 values in the grid in a Graph
+function findPlayableCell(grid, x, y, dir)
+    local w, h = grid:getSize()
+
+    if dir == Direction.L then
+        x = max(x - 1, 1)
+
+        for x1 = x, 1, -1 do
+            if grid:getValue(x1, y) ~= 0 then
+                x = x1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.R then
+        x = min(x + 1, w)
+
+        for x1 = x, w do
+            if grid:getValue(x1, y) ~= 0 then
+                x = x1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.U then
+        y = max(y - 1, 1)
+
+        for y1 = y, 1, -1 do
+            if grid:getValue(x, y1) ~= 0 then
+                y = y1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.D then
+        y = min(y + 1, h)
+
+        for y1 = y, h do
+            if grid:getValue(x, y1) ~= 0 then
+                y = y1
+                break
+            end
+        end
+    end
+
+    return x, y
+end
+
 GridCursor.new = function(grid)
     local grid_w, grid_h = grid:getSize()
 
@@ -92,19 +143,19 @@ GridCursor.new = function(grid)
         local input_manager = ServiceLocator.get(InputManager)
 
         if input_manager:isPressed('right', 'd') then
-            x = min(max(x + 1, 1), grid_w)
+            x, y = findPlayableCell(grid, x, y, Direction.R)
         end
 
         if input_manager:isPressed('left', 'a') then
-            x = min(max(x - 1, 1), grid_w)
+            x, y = findPlayableCell(grid, x, y, Direction.L)
         end
 
         if input_manager:isPressed('up', 'w') then
-            y = min(max(y - 1, 1), grid_h)
+            x, y = findPlayableCell(grid, x, y, Direction.U)
         end
 
         if input_manager:isPressed('down', 's') then
-            y = min(max(y + 1, 1), grid_h)
+            x, y = findPlayableCell(grid, x, y, Direction.D)
         end    
     end
 
