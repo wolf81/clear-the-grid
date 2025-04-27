@@ -24,7 +24,8 @@ PeekView.new = function(grid)
         love.graphics.push()
 
         love.graphics.setColor(COLOR)
-        love.graphics.translate(-16, -2)
+        love.graphics.translate(-6, 0)
+        love.graphics.setFont(font)
         love.graphics.print(text, text_x, text_y)
 
         love.graphics.pop()

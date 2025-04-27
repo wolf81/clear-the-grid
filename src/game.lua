@@ -54,6 +54,10 @@ Game.new = function()
 
     board:onGridChange(function() 
         move_list:setMoves(grid:getMoves())
+
+        if grid:isSolved() then
+            -- TODO: load next level
+        end
     end)
 
     local update = function(self, dt)

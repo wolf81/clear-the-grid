@@ -22,6 +22,8 @@ Board.new = function(grid)
     local ox = math.floor((VIRTUAL_W - w * GRID_SIZE) / 2)
     local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
 
+    local add = false
+
     local cursor        = GridCursor(grid)
     local dir_chooser   = DirectionChooser(grid)
     local peek_view     = PeekView(grid)
@@ -40,9 +42,9 @@ Board.new = function(grid)
 
     dir_chooser:onDirectionChange(function() 
         local dir = dir_chooser:getDirection()
-        local x, y = dir_chooser:getCoord()
         if dir then
-            peek_view:setMove(x, y, DIR_INFO[dir], false)    
+            local x, y = dir_chooser:getCoord()
+            peek_view:setMove(x, y, DIR_INFO[dir], add)    
         end
     end)
 
@@ -65,13 +67,23 @@ Board.new = function(grid)
                 local dir = dir_chooser:getDirection()
                 if dir ~= 0 then
                     local x, y = cursor:getCoord()
-                    grid:applyMove(x, y, DIR_INFO[dir], false)
+                    grid:applyMove(x, y, DIR_INFO[dir], add)
                     onGridChanged()
                 end
             end
 
             if input_manager:isReleased('escape') then
                 cursor:setState('default')
+            end
+
+            if input_manager:isReleased('tab') then
+                add = (not add)
+
+                local dir = dir_chooser:getDirection()
+                if dir then
+                    local x, y = dir_chooser:getCoord()
+                    peek_view:setMove(x, y, DIR_INFO[dir], add)    
+                end
             end
         end    
 
