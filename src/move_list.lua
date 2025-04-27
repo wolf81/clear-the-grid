@@ -20,7 +20,7 @@ local function newBackgroundImage()
         love.graphics.setLineWidth(1)
         love.graphics.setColor(LINE_COLOR)
 
-        for y = 0, VIRTUAL_H, LINE_HEIGHT do
+        for y = LINE_HEIGHT * 2, VIRTUAL_H, LINE_HEIGHT do
             love.graphics.line(0, y, WIDTH, y)            
         end
 
