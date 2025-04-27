@@ -1,5 +1,6 @@
 local GridCursor        = require 'src.grid_cursor'
 local DirectionChooser  = require 'src.direction_chooser'
+local PeekView          = require 'src.peek_view'
 
 local FG_COLOR      = { 0.2, 0.2, 0.8, 1.0 }
 local GRID_COLOR    = { 0.5, 0.5, 0.5, 1.0 }
@@ -23,12 +24,14 @@ Board.new = function(grid)
 
     local cursor        = GridCursor(grid)
     local dir_chooser   = DirectionChooser(grid)
+    local peek_view     = PeekView(grid)
 
     -- callback
     local onGridChanged = function() end
 
     cursor:onStateChange(function() 
         dir_chooser:setActive(cursor:getState() == 'highlight')
+        peek_view:setActive(cursor:getState() == 'highlight')
     end)
 
     cursor:onCoordChange(function()
@@ -38,8 +41,9 @@ Board.new = function(grid)
     dir_chooser:onDirectionChange(function() 
         local dir = dir_chooser:getDirection()
         local x, y = dir_chooser:getCoord()
-        local tx, ty, tv, tc = grid:peekMove(x, y, DIR_INFO[dir], false)
-        print(tx, ty, tv, tc)
+        if dir then
+            peek_view:setMove(x, y, DIR_INFO[dir], false)    
+        end
     end)
 
     local font_manager = ServiceLocator.get(FontManager)
@@ -48,7 +52,8 @@ Board.new = function(grid)
 
     local update = function(self, dt)
         cursor:update(dt)
-        dir_chooser:update(dt)        
+        dir_chooser:update(dt)
+        peek_view:update(dt)        
 
         local input_manager = ServiceLocator.get(InputManager)
 
@@ -132,6 +137,9 @@ Board.new = function(grid)
 
         -- draw direction chooser
         dir_chooser:draw()
+
+        -- draw the peek view
+        peek_view:draw()
 
         -- reset color to white
         love.graphics.setColor(1, 1, 1, 1)

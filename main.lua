@@ -23,6 +23,7 @@ function love.load(args)
 
     font_manager:register('default', 'fnt/Kalam/Kalam-Bold.ttf', 24)
     font_manager:register('heading', 'fnt/Kalam/Kalam-Bold.ttf', 32)
+    font_manager:register('caption', 'fnt/Kalam/Kalam-Bold.ttf', 12)
 
     ServiceLocator.register(font_manager)
 
