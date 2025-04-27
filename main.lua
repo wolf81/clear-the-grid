@@ -13,13 +13,23 @@ local projector = Projector(VIRTUAL_W, VIRTUAL_H)
 -- keep track of user input
 local input_manager = InputManager()
 
-local game = Game(1)
+-- load fonts at the start of the game
+local font_manager = FontManager()
+
+local game = nil
 
 function love.load(args)
     ServiceLocator.register(input_manager)
 
+    font_manager:register('default', 'fnt/Kalam/Kalam-Bold.ttf', 24)
+    font_manager:register('heading', 'fnt/Kalam/Kalam-Bold.ttf', 32)
+
+    ServiceLocator.register(font_manager)
+
     -- enable the OS sending repeated key presses while key is down
     love.keyboard.setKeyRepeat(true)
+
+    game = Game(1)
 end
 
 function love.resize(w, h)

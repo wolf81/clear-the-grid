@@ -205,11 +205,11 @@ GridCursor.new = function(grid)
     end
 
     local onStateChange = function(self, func)
-        onStateChanged = func
+        onStateChanged = func or function() end
     end
 
     local onCoordChange = function(self, func)
-        onCoordChanged = func
+        onCoordChanged = func or function() end
     end
 
     return setmetatable({

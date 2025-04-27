@@ -24,6 +24,9 @@ Board.new = function(grid)
     local cursor        = GridCursor(grid)
     local dir_chooser   = DirectionChooser(grid)
 
+    -- callback
+    local onGridChanged = function() end
+
     cursor:onStateChange(function() 
         dir_chooser:setActive(cursor:getState() == 'highlight')
     end)
@@ -32,8 +35,8 @@ Board.new = function(grid)
         dir_chooser:setCoord(cursor:getCoord())
     end)
 
-    -- set font
-    local font = love.graphics.newFont('fnt/Kalam/Kalam-Bold.ttf', 24)
+    local font_manager = ServiceLocator.get(FontManager)
+    local font = font_manager:get('default')
     local text_h = font:getHeight()
 
     local update = function(self, dt)
@@ -51,6 +54,7 @@ Board.new = function(grid)
                 if dir ~= 0 then
                     local x, y = cursor:getCoord()
                     grid:applyMove(x, y, DIR_INFO[dir], false)
+                    onGridChanged()
                 end
             end
 
@@ -69,6 +73,8 @@ Board.new = function(grid)
     end
 
     local draw = function(self)
+        love.graphics.push()
+
         -- move grid to center of screen
         love.graphics.translate(ox, oy)
 
@@ -122,11 +128,18 @@ Board.new = function(grid)
 
         -- reset color to white
         love.graphics.setColor(1, 1, 1, 1)
+
+        love.graphics.pop()
+    end
+
+    local onGridChange = function(self, func)
+        onGridChanged = func or function() end
     end
 
     return setmetatable({
-        update      = update,
-        draw        = draw,
+        draw            = draw,
+        update          = update,
+        onGridChange    = onGridChange,
     }, Board)
 end
 

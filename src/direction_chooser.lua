@@ -38,6 +38,9 @@ DirectionChooser.new = function(grid)
     -- whether the chooser is active - when active accepts input and is visible
     local active = false
 
+    -- a callback that is invoked whenever the target direction changes
+    local onDirectionChanged = function() end
+
     local update = function(self, dt)
         if not active then return end
 
@@ -135,13 +138,18 @@ DirectionChooser.new = function(grid)
     local getDirection = function(self)
         return dir
     end
+
+    local onDirectionChange = function(self, func)
+        onDirectionChanged = func or function() end
+    end
     
     return setmetatable({
-        draw            = draw,
-        update          = update,
-        setCoord        = setCoord,
-        setActive       = setActive,
-        getDirection    = getDirection,
+        draw                = draw,
+        update              = update,
+        setCoord            = setCoord,
+        setActive           = setActive,
+        getDirection        = getDirection,
+        onDirectionChange   = onDirectionChange,
     }, DirectionChooser)
 end
 
