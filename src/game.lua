@@ -1,10 +1,9 @@
 local Board     = require 'src.board'
 local MoveList  = require 'src.move_list'
 
-local Game = {}
+local GRID_COLOR = { 0.97, 0.97, 0.97, 1.0 }
 
-local BG_COLOR      = { 1, 1, 1, 1 }
-local GRID_COLOR    = { 0.97, 0.97, 0.97, 1.0 }
+local Game = {}
 
 local loadGrid = function(index)
     local path = string.format('dat/0XX/%d.txt', index)

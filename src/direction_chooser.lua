@@ -1,8 +1,6 @@
 local COLOR         = { 1.0, 0.2, 0.2, 1.0 }
 local TRIANGLE_SIZE = math.ceil(GRID_SIZE / 4)
 
-local DirectionChooser = {}
-
 -- map direction keys (as used in libctg) to Direction flags
 local DIR_INFO = {
     [Direction.L] = 'L',
@@ -10,6 +8,8 @@ local DIR_INFO = {
     [Direction.U] = 'U',
     [Direction.D] = 'D',
 }
+
+local DirectionChooser = {}
 
 local function getValidDirs(grid, x, y)
     local dirs = {}
@@ -49,24 +49,28 @@ DirectionChooser.new = function(grid)
         if input_manager:isPressed('right', 'd') then
             if valid_dirs[Direction.R] then
                 dir = Direction.R
+                onDirectionChanged()
             end
         end
 
         if input_manager:isPressed('left', 'a') then
             if valid_dirs[Direction.L] then
                 dir = Direction.L
+                onDirectionChanged()
             end
         end
 
         if input_manager:isPressed('up', 'w') then
             if valid_dirs[Direction.U] then
                 dir = Direction.U
+                onDirectionChanged()
             end
         end
 
         if input_manager:isPressed('down', 's') then
             if valid_dirs[Direction.D] then
                 dir = Direction.D
+                onDirectionChanged()
             end
         end
     end
@@ -116,6 +120,10 @@ DirectionChooser.new = function(grid)
         love.graphics.pop()
     end
 
+    local getCoord = function(self)
+        return x, y
+    end
+
     local setCoord = function(self, x_, y_)
         -- only update when coords have changed
         if x == x_ and y == y_ then return end
@@ -133,6 +141,8 @@ DirectionChooser.new = function(grid)
 
     local setActive = function(self, active_)
         active = active_
+
+        onDirectionChanged()
     end
 
     local getDirection = function(self)
@@ -146,6 +156,7 @@ DirectionChooser.new = function(grid)
     return setmetatable({
         draw                = draw,
         update              = update,
+        getCoord            = getCoord,
         setCoord            = setCoord,
         setActive           = setActive,
         getDirection        = getDirection,

@@ -1,8 +1,6 @@
 local GridCursor        = require 'src.grid_cursor'
 local DirectionChooser  = require 'src.direction_chooser'
 
-local Board = {}
-
 local FG_COLOR      = { 0.2, 0.2, 0.8, 1.0 }
 local GRID_COLOR    = { 0.5, 0.5, 0.5, 1.0 }
 local MARGIN_COLOR  = { 1.0, 0.2, 0.2, 1.0 }
@@ -14,6 +12,8 @@ local DIR_INFO = {
     [Direction.L] = 'L',
     [Direction.R] = 'R',
 }
+
+local Board = {}
 
 Board.new = function(grid)
     -- determine x and y offsets for drawing the grid
@@ -33,6 +33,13 @@ Board.new = function(grid)
 
     cursor:onCoordChange(function()
         dir_chooser:setCoord(cursor:getCoord())
+    end)
+
+    dir_chooser:onDirectionChange(function() 
+        local dir = dir_chooser:getDirection()
+        local x, y = dir_chooser:getCoord()
+        local tx, ty, tv, tc = grid:peekMove(x, y, DIR_INFO[dir], false)
+        print(tx, ty, tv, tc)
     end)
 
     local font_manager = ServiceLocator.get(FontManager)

@@ -1,10 +1,10 @@
-local MoveList = {}
-
 local WIDTH         = 300
 local BORDER_COLOR  = { 1.0, 0.2, 0.2, 1.0 }
 local TEXT_COLOR    = { 0.2, 0.2, 0.8, 1.0 }
 local LINE_COLOR    = { 0.95, 0.95, 0.95, 1.0 }
 local LINE_HEIGHT   = 48
+
+local MoveList = {}
 
 local function newBackgroundImage()
     local font_manager = ServiceLocator.get(FontManager)
