@@ -1,7 +1,7 @@
 local min, max, ceil, sin = math.min, math.max, math.ceil, math.sin
 
-local COLOR         = { 1.0, 0.2, 0.2, 1.0 }
-local BASE_SCALE    = 0.96 -- by default cursor is a little bit smaller than GRID_SIZE
+local COLOR = { 1.0, 0.2, 0.2, 1.0 }
+local SCALE = 0.96 -- by default cursor is a little bit smaller than GRID_SIZE
 
 -- control states
 local STATES = { 
@@ -110,16 +110,13 @@ GridCursor.new = function(grid)
     local time = 0.0
 
     -- styling for default animation
-    local scale, alpha = BASE_SCALE, 1.0
+    local alpha = 1.0
 
     local update = function(self, dt)
         time = time + dt        
 
         -- for default state us a pulse animation
         if state == 'default' then
-            -- scale cursor with time from 0.96 to 1.0
-            scale = BASE_SCALE + 0.04 * sin(time * 2) 
-
             -- fade cursor in/out with time from 0.4 to 1.0
             alpha = 0.4 + 0.6 * (0.5 + 0.5 * sin(time * 2))            
         end
@@ -158,7 +155,7 @@ GridCursor.new = function(grid)
         love.graphics.translate(
             (x - 1) * GRID_SIZE + GRID_SIZE / 2, 
             (y - 1) * GRID_SIZE + GRID_SIZE / 2)
-        love.graphics.scale(scale)
+        love.graphics.scale(SCALE)
 
         local rect_x, rect_y = -GRID_SIZE / 2, -GRID_SIZE / 2
 
