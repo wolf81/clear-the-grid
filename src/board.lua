@@ -90,7 +90,7 @@ Board.new = function(grid)
         if cursor_state == 'default' then
             if input_manager:isReleased('r') then
                 grid:revertMove()
-
+                onGridChanged()
             end
 
             if input_manager:isReleased('return') then

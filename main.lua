@@ -1,7 +1,7 @@
 require 'src.constants'
 require 'src.dependencies'
 
-local Game = require 'src.game'
+local GameScreen = require 'src.game_screen'
 
 -- don't buffer output while app is running
 -- this way we see immediate feedback in e.g. Sublime Text console - not after app is closed
@@ -16,7 +16,9 @@ local input_manager = InputManager()
 -- load fonts at the start of the game
 local font_manager = FontManager()
 
-local game = nil
+local screen_manager = ScreenManager()
+
+local game_screen = nil
 
 function love.load(args)
     ServiceLocator.register(input_manager)
@@ -30,7 +32,8 @@ function love.load(args)
     -- enable the OS sending repeated key presses while key is down
     love.keyboard.setKeyRepeat(true)
 
-    game = Game(1)
+    screen_manager:switch(GameScreen())
+    ServiceLocator.register(screen_manager)
 end
 
 function love.resize(w, h)
@@ -38,7 +41,7 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
-    game:update(dt)
+    screen_manager:update(dt)
 
     input_manager:update(dt)
 end
@@ -46,7 +49,7 @@ end
 function love.draw()
     projector:attach()    
 
-    game:draw()
+    screen_manager:draw()
 
     projector:detach()
 end

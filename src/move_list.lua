@@ -46,7 +46,7 @@ MoveList.new = function()
     local font = font_manager:get('heading')
 
     local update = function(self, dt)
-
+        -- body
     end
 
     local draw = function(self)
@@ -54,7 +54,6 @@ MoveList.new = function()
 
         love.graphics.translate(VIRTUAL_W - WIDTH, 0)
 
-        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(background)        
 
         love.graphics.setColor({ 0.7, 0.7, 0.7, 1.0 })
