@@ -6,14 +6,19 @@ ScreenManager.new = function()
     local transition = nil
 
     local screen = {
-        update  = function() end,
-        draw    = function() end,
+        unloadContent   = function() end,
+        loadContent     = function() end,
+        update          = function() end,
+        draw            = function() end,
     }
 
     local switch = function(self, screen_, transition_)
         if getmetatable(screen) == getmetatable(screen_) then return end
 
+        screen_:loadContent()
+
         transition = transition_ or CrossfadeTransition(0.5, screen, screen_, function() 
+            screen:unloadContent()
             transition = nil
         end)
 

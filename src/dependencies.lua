@@ -1,7 +1,11 @@
 Direction       = require 'src.direction'
 
+-- UI
+Layout          = require 'src.ui.layout'
+
 -- screens
-GameScreen      = require 'src.game_screen'
+MenuScreen      = require 'src.screens.menu_screen'
+GameScreen      = require 'src.screens.game_screen'
 
 -- services managed by service locator
 InputManager    = require 'src.input_manager'

@@ -1,0 +1,39 @@
+[
+	{
+		"type": "button",
+		"text": "NEW GAME",
+		"pos": [ 640, 600 ],
+		"click": "newGame",
+		"states": {
+			"normal": {
+				"fg_color": "#ffffff",
+				"bg_color": "#333333",
+			},
+			"hovered": {
+				"fg_color": "#ffffff",
+				"bg_color": "#444444",
+			},
+			"pressed": {
+				"fg_color": "#ffffff",
+				"bg_color": "#555555",
+			},
+		}
+	},
+	{
+		"id": "titleLabel",
+		"type": "label",
+		"text": "hi",
+		"z_index": 10,
+		"pos": [ 640, 50 ],
+		"states": {
+			"normal": {
+				"fg_color": "#ffffff",
+			},
+		}
+	},
+	{
+		"type": "image",
+		"file": "gfx/header.png",
+		"pos": [ 640, 120 ]
+	}
+]

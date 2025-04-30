@@ -1,3 +1,6 @@
 [submodule "lib/profile"]
 	path = lib/profile
 	url = https://github.com/wolf81/profile.lua.git
+[submodule "lib/json"]
+	path = lib/json
+	url = https://github.com/wolf81/json.lua.git
