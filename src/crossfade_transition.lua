@@ -6,6 +6,19 @@ CrossfadeTransition.new = function(duration, from, to, finished)
     local time = 0.0
     local blend = 0.0
 
+    love.graphics.setColor(1, 1, 1, 1)
+
+    local from_canvas = love.graphics.newCanvas(VIRTUAL_W, VIRTUAL_H)
+    love.graphics.setCanvas(from_canvas)
+    from:draw()
+
+    love.graphics.setColor(1, 1, 1, 1)
+    local to_canvas = love.graphics.newCanvas(VIRTUAL_W, VIRTUAL_H)
+    love.graphics.setCanvas(to_canvas)
+    to:draw()
+
+    love.graphics.setCanvas()
+
     local update = function(self, dt)
         time = min(time + dt, duration)
         blend = (time / duration)
@@ -16,10 +29,12 @@ CrossfadeTransition.new = function(duration, from, to, finished)
 
     local draw = function(self)
         love.graphics.setColor(1, 1, 1, 1.0 - blend)
-        from:draw()
+        love.graphics.draw(from_canvas)
 
         love.graphics.setColor(1, 1, 1, blend)
-        to:draw()
+        love.graphics.draw(to_canvas)
+
+        love.graphics.setColor(1, 1, 1, 1)
     end
 
     return setmetatable({

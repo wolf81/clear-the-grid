@@ -6,8 +6,8 @@ ScreenManager.new = function()
     local transition = nil
 
     local screen = {
-        update      = function() end,
-        draw        = function() end,
+        update  = function() end,
+        draw    = function() end,
     }
 
     local switch = function(self, screen_, transition_)
