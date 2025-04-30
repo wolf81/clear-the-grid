@@ -88,6 +88,11 @@ Board.new = function(grid)
         end    
 
         if cursor_state == 'default' then
+            if input_manager:isReleased('r') then
+                grid:revertMove()
+
+            end
+
             if input_manager:isReleased('return') then
                 if grid:getValue(cursor:getCoord()) ~= 0 then
                     cursor:setState('highlight')
