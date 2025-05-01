@@ -1,4 +1,4 @@
-local CrossfadeTransition = require 'src.crossfade_transition'
+local CrossfadeTransition = require 'src.transitions.crossfade_transition'
 
 local ScreenManager = {}
 
@@ -17,7 +17,7 @@ ScreenManager.new = function()
 
         screen_:loadContent()
 
-        transition = transition_ or CrossfadeTransition(0.5, screen, screen_, function() 
+        transition = transition_ or SlideTransition(0.5, screen, screen_, function() 
             screen:unloadContent()
             transition = nil
         end)

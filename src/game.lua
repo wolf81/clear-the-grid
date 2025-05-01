@@ -11,7 +11,7 @@ local loadGrid = function(index)
 
     local contents, _ = love.filesystem.read(path, -1)
     
-    local grid, err = ctg.parseGrid(contents) --> table: 0000000000A73540
+    local grid, err = ctg.parseGrid(contents)
 
     if err then
         error(err)

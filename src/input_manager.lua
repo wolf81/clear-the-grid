@@ -1,6 +1,8 @@
 local InputManager = {}
 
-InputManager.new = function()
+InputManager.new = function(toWorld)
+    toWorld = toWorld or function(x, y) return x, y end
+
     local pressed, released = {}, {}
 
     local update = function(self, dt)
@@ -31,13 +33,20 @@ InputManager.new = function()
         
         return false
     end
+
+    local getMouseState = function(self)
+        local mx, my = toWorld(love.mouse.getPosition())
+        local is_down = love.mouse.isDown(1)
+        return mx, my, is_down
+    end
     
     return setmetatable({
-        update      = update,
-        isPressed   = isPressed,
-        isReleased  = isReleased,
-        keyPressed  = keyPressed,
-        keyReleased = keyReleased,
+        update          = update,
+        isPressed       = isPressed,
+        isReleased      = isReleased,
+        keyPressed      = keyPressed,
+        keyReleased     = keyReleased,
+        getMouseState   = getMouseState,
     }, InputManager)
 end
 

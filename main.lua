@@ -9,7 +9,9 @@ io.stdout:setvbuf('no')
 local projector = Projector(VIRTUAL_W, VIRTUAL_H)
 
 -- keep track of user input
-local input_manager = InputManager()
+local input_manager = InputManager(function(x, y) 
+    return projector:toWorld(x, y)
+end)
 
 -- load fonts at the start of the game
 local font_manager = FontManager()
