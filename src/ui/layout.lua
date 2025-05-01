@@ -180,10 +180,10 @@ local createButton = function(tbl, toWorld, opts)
         update = function(dt)
             local mx, my = toWorld(love.mouse.getPosition())
             local hovered = (
-                mx > x - w / 2 and 
-                mx < x + w / 2 and
-                my > y - h / 2 and 
-                my < y + h / 2)
+                mx > x - w / 2 - left and 
+                mx < x + w / 2 + right and
+                my > y - h / 2 - top and 
+                my < y + h / 2 + bottom)
             local pressed = hovered and love.mouse.isDown(1)
 
             if hovered and not pressed and state == 'pressed' then

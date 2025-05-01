@@ -11,12 +11,12 @@
 		"text": "CLEAR THE GRID",
 		"font": {
 			"file": "fnt/Kalam/Kalam-Regular.ttf",
-			"size": 40,
+			"size": 60,
 		},
 		"pos": [ 0.5, 0.15 ],
 		"states": {
 			"normal": {
-				"fg_color": "#ffffff",
+				"fg_color": "#000000",
 			},
 		}
 	},
@@ -37,11 +37,11 @@
 			},
 			"hovered": {
 				"fg_color": "#ffffff",
-				"bg_color": "#444444",
+				"bg_color": "#882222",
 			},
 			"pressed": {
 				"fg_color": "#ffffff",
-				"bg_color": "#555555",
+				"bg_color": "#BB3333",
 			},
 		}
 	},
@@ -61,11 +61,11 @@
 			},
 			"hovered": {
 				"fg_color": "#ffffff",
-				"bg_color": "#444444",
+				"bg_color": "#882222",
 			},
 			"pressed": {
 				"fg_color": "#ffffff",
-				"bg_color": "#555555",
+				"bg_color": "#BB3333",
 			},
 		}
 	},
@@ -86,11 +86,11 @@
 			},
 			"hovered": {
 				"fg_color": "#ffffff",
-				"bg_color": "#444444",
+				"bg_color": "#882222",
 			},
 			"pressed": {
 				"fg_color": "#ffffff",
-				"bg_color": "#555555",
+				"bg_color": "#BB3333",
 			},
 		}
 	},

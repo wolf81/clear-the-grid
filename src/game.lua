@@ -1,7 +1,7 @@
 local Board     = require 'src.board'
 local MoveList  = require 'src.move_list'
 
-local GRID_COLOR = { 0.97, 0.97, 0.97, 1.0 }
+local GRID_COLOR = { 0.95, 0.95, 0.95, 1.0 }
 
 local Game = {}
 
