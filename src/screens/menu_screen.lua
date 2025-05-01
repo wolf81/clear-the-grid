@@ -26,12 +26,19 @@ MenuScreen.new = function()
         screen_manager:switch(GameScreen())
     end
 
+    local quit = function(self)
+        love.event.quit()
+    end
+
     return setmetatable({
         draw            = draw,
         update          = update,
-        newGame         = newGame,
         loadContent     = loadContent,
         unloadContent   = unloadContent,
+        -- button actions
+        tutorial        = showTutorial,
+        newGame         = newGame,
+        quit            = quit,
     }, MenuScreen)
 end
 

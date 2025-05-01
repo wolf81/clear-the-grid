@@ -1,12 +1,34 @@
 [
 	{
+		"type": "image",
+		"file": "gfx/header.png",
+		"pos": [ 0.5, 0.1 ]
+	},	
+	{
+		"id": "titleLabel",
+		"type": "label",
+		"text": "CLEAR THE GRID",
+		"font": {
+			"file": "fnt/Kalam/Kalam-Regular.ttf",
+			"size": 40,
+		},
+		"z_index": 10,
+		"pos": [ 0.5, 0.15 ],
+		"states": {
+			"normal": {
+				"fg_color": "#ffffff",
+			},
+		}
+	},
+	{
 		"type": "button",
 		"text": "NEW GAME",
+		"margin": [ 20, 10, 20, 0 ],
 		"font": {
 			"file": "fnt/Kalam/Kalam-Bold.ttf",
 			"size": 40,
 		},
-		"pos": [ 0.5, 0.5 ],
+		"pos": [ 0.5, 0.4 ],
 		"click": "newGame",
 		"states": {
 			"normal": {
@@ -24,24 +46,52 @@
 		}
 	},
 	{
-		"id": "titleLabel",
-		"type": "label",
-		"text": "CLEAR THE GRID",
+		"type": "button",
+		"text": "TUTORIAL",
+		"margin": [ 20, 10, 20, 0 ],
 		"font": {
 			"file": "fnt/Kalam/Kalam-Bold.ttf",
 			"size": 40,
 		},
-		"z_index": 10,
-		"pos": [ 0.5, 0.15 ],
+		"pos": [ 0.5, 0.5 ],
 		"states": {
 			"normal": {
 				"fg_color": "#ffffff",
+				"bg_color": "#333333",
+			},
+			"hovered": {
+				"fg_color": "#ffffff",
+				"bg_color": "#444444",
+			},
+			"pressed": {
+				"fg_color": "#ffffff",
+				"bg_color": "#555555",
 			},
 		}
 	},
 	{
-		"type": "image",
-		"file": "gfx/header.png",
-		"pos": [ 0.5, 0.1 ]
-	}
+		"type": "button",
+		"text": "QUIT",
+		"margin": [ 20, 10, 20, 0 ],
+		"font": {
+			"file": "fnt/Kalam/Kalam-Bold.ttf",
+			"size": 40,
+		},
+		"pos": [ 0.5, 0.6 ],
+		"click": "quit",
+		"states": {
+			"normal": {
+				"fg_color": "#ffffff",
+				"bg_color": "#333333",
+			},
+			"hovered": {
+				"fg_color": "#ffffff",
+				"bg_color": "#444444",
+			},
+			"pressed": {
+				"fg_color": "#ffffff",
+				"bg_color": "#555555",
+			},
+		}
+	},
 ]

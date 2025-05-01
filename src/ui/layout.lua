@@ -13,6 +13,25 @@ local function getFont(font_info)
     return font
 end
 
+-- left top right bottom
+local function getMargin(...)
+    local args = {...}
+
+    local l, t, r, b = 0, 0, 0, 0
+
+    if #args == 1 then
+        l, t, r, b = args[1], args[1], args[1], args[1]
+    elseif #args == 2 then
+        l, t, r, b = args[1], args[2], args[1], args[2]
+    elseif #args == 4 then
+        l, t, r, b = unpack(args)
+    else
+        error(string.format('Invalid number of arguments: %d', #args))
+    end
+
+    return l, t, r, b
+end
+
 local hexToRgb = function(hex)
     local r, g, b, a = 255, 255, 255, 255
 
@@ -66,10 +85,11 @@ local createLabel = function(tbl, toWorld)
     local state = 'normal'
 
     local font = getFont(tbl.font or {})
+    local left, top, right, bottom = getMargin(unpack(tbl.margin or { 0 }))
 
     local text = tbl.text or ''
-    w = font:getWidth(text) + 20
-    h = font:getHeight() + 10
+    w = font:getWidth(text)
+    h = font:getHeight()
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     return {
@@ -84,7 +104,7 @@ local createLabel = function(tbl, toWorld)
             love.graphics.translate(ox, oy)
 
             love.graphics.setColor(states[state].bg_color )
-            love.graphics.rectangle('fill', x, y, w, h)
+            love.graphics.rectangle('fill', x - left, y - top, w + left + right, h + top + bottom)
 
             love.graphics.setFont(font)
             love.graphics.setColor(states[state].fg_color)
@@ -141,10 +161,11 @@ local createButton = function(tbl, toWorld, opts)
     local state = 'normal'
 
     local font = getFont(tbl.font or {})
+    local left, top, right, bottom = getMargin(unpack(tbl.margin or { 20, 10 }))
 
     local text = tbl.text or ''
-    w = font:getWidth(text) + 20
-    h = font:getHeight() + 10
+    w = font:getWidth(text)
+    h = font:getHeight()
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     local action = function() print('click') end
@@ -185,11 +206,11 @@ local createButton = function(tbl, toWorld, opts)
             love.graphics.translate(ox, oy)
 
             love.graphics.setColor(states[state].bg_color)
-            love.graphics.rectangle('fill', x, y, w, h)
+            love.graphics.rectangle('fill', x - left, y - top, w + left + right, h + top + bottom)
 
             love.graphics.setFont(font)
             love.graphics.setColor(states[state].fg_color)
-            love.graphics.print(text, x + 10, y + 5)
+            love.graphics.print(text, x, y)
 
             love.graphics.pop()
         end,        
