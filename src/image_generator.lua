@@ -11,6 +11,8 @@ M.render = function(w, h, func)
 
     local image_data = canvas:newImageData()
 
+    image_data:encode('png', string.format('test-%d-%d.png', w, h))
+
     return love.graphics.newImage(image_data)
 end
 
