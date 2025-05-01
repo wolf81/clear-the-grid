@@ -18,6 +18,10 @@ local font_manager = FontManager()
 local screen_manager = ScreenManager()
 
 function love.load(args)
+    -- registered as a service for screen coord transforms
+    -- seems unclean - figure out a better approach
+    ServiceLocator.register(projector)
+
     ServiceLocator.register(input_manager)
 
     font_manager:register('default', 'fnt/Kalam/Kalam-Bold.ttf', 24)

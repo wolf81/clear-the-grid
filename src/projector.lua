@@ -1,3 +1,5 @@
+local floor = math.floor
+
 local Projector = {}
 
 Projector.new = function(virtual_w, virtual_h)
@@ -36,14 +38,19 @@ Projector.new = function(virtual_w, virtual_h)
         love.graphics.draw(canvas)
         love.graphics.pop()
     end
+
+    local toWorld = function(self, x, y)
+        return floor(x * 1/scale), floor(y * 1/scale)
+    end
     
     -- setup initial size
     resize(nil, love.graphics.getWidth(), love.graphics.getHeight())
 
     return setmetatable({
-        resize = resize,
-        attach = attach,
-        detach = detach,        
+        resize  = resize,
+        attach  = attach,
+        detach  = detach,
+        toWorld = toWorld,
     }, Projector)
 end
 

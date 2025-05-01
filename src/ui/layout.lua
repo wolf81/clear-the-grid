@@ -42,16 +42,21 @@ local createStates = function(tbl)
     return states
 end
 
-local createLabel = function(tbl, font)
+local createLabel = function(tbl, toWorld, opts)
     local x, y = unpack(tbl.pos)
     local w, h = 0, 0
+
+    local window_w, window_h = love.window.getMode()
+    if x <= 1.0 then
+        x, y = toWorld(x * window_w, y * window_h)
+    end
 
     local states = createStates(tbl.states or {})
     local state = 'normal'
 
     local text = tbl.text or ''
-    w = font:getWidth(text) + 20
-    h = font:getHeight() + 10
+    w = opts.font:getWidth(text) + 20
+    h = opts.font:getHeight() + 10
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     return {
@@ -76,12 +81,17 @@ local createLabel = function(tbl, font)
     }
 end
 
-local createImage = function(tbl)
+local createImage = function(tbl, toWorld)
     local image = love.graphics.newImage(tbl.file)
 
     local x, y = unpack(tbl.pos)
     local w, h = image:getDimensions()
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
+
+    local window_w, window_h = love.window.getMode()
+    if x <= 1.0 then
+        x, y = toWorld(x * window_w, y * window_h)
+    end
 
     local states = createStates(tbl.states or {})
     local state = 'normal'
@@ -104,37 +114,42 @@ local createImage = function(tbl)
     }
 end
 
-local createButton = function(tbl, font, screen)
+local createButton = function(tbl, toWorld, opts)
     local x, y = unpack(tbl.pos)
     local w, h = 0, 0
+
+    local window_w, window_h = love.window.getMode()
+    if x <= 1.0 then
+        x, y = toWorld(x * window_w, y * window_h)
+    end
 
     local states = createStates(tbl.states or {})
     local state = 'normal'
 
     local text = tbl.text or ''
-    w = font:getWidth(text) + 20
-    h = font:getHeight() + 10
+    w = opts.font:getWidth(text) + 20
+    h = opts.font:getHeight() + 10
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     local action = function() print('click') end
 
     if tbl.click ~= nil then
-        action = function() screen[tbl.click]() end
+        action = function() opts.screen[tbl.click]() end
     end
 
     return {
         z_index = tbl.z_index or 0,
 
         update = function(dt)
-            local mx, my = love.mouse.getPosition()
-            local pressed = love.mouse.isDown(1)
+            local mx, my = toWorld(love.mouse.getPosition())
             local hovered = (
                 mx > x - w / 2 and 
                 mx < x + w / 2 and
                 my > y - h / 2 and 
                 my < y + h / 2)
+            local pressed = hovered and love.mouse.isDown(1)
 
-            if not pressed and state == 'pressed' then
+            if hovered and not pressed and state == 'pressed' then
                 action()
             end
 
@@ -164,22 +179,30 @@ local createButton = function(tbl, font, screen)
     }
 end
 
-Layout.new = function(file, screen)
+Layout.new = function(file, screen, toWorld)
     local items = json.decode(file)
 
     local controls = {}
     local control_info = {}
+
+    -- map screen coords to world coords - used for determining mouse position
+    toWorld = toWorld or function(x, y) return x, y end
 
     -- TODO: should reset on leave?
     local font = love.graphics.getFont()
 
     for idx, obj in ipairs(items) do
         if obj.type == 'label' then
-            table.insert(controls, createLabel(obj, font))
+            table.insert(controls, createLabel(obj, toWorld, { 
+                font = font,
+            }))
         elseif obj.type == 'button' then
-            table.insert(controls, createButton(obj, font, screen))
+            table.insert(controls, createButton(obj, toWorld, { 
+                font = font, 
+                screen = screen, 
+            }))
         elseif obj.type == 'image' then
-            table.insert(controls, createImage(obj))
+            table.insert(controls, createImage(obj, toWorld))
         end
 
         if obj.id ~= nil then
@@ -187,6 +210,7 @@ Layout.new = function(file, screen)
         end
     end
 
+    -- sort by z-index, ensuring controls with a higher value appear on top
     table.sort(controls, function(a, b) return a.z_index < b.z_index end)
 
     local draw = function(self)
@@ -213,9 +237,10 @@ Layout.new = function(file, screen)
     end
 
     return setmetatable({
-        getControl  = getControl,
-        update      = update,
         draw        = draw,
+        update      = update,
+        toWorld     = toWorld,
+        getControl  = getControl,
     }, Layout)
 end
 

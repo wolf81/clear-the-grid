@@ -2,7 +2,7 @@
 	{
 		"type": "button",
 		"text": "NEW GAME",
-		"pos": [ 640, 600 ],
+		"pos": [ 0.5, 0.5 ],
 		"click": "newGame",
 		"states": {
 			"normal": {
@@ -24,7 +24,7 @@
 		"type": "label",
 		"text": "hi",
 		"z_index": 10,
-		"pos": [ 640, 50 ],
+		"pos": [ 0.5, 0.75 ],
 		"states": {
 			"normal": {
 				"fg_color": "#ffffff",
@@ -34,6 +34,6 @@
 	{
 		"type": "image",
 		"file": "gfx/header.png",
-		"pos": [ 640, 120 ]
+		"pos": [ 0.5, 0.1 ]
 	}
 ]

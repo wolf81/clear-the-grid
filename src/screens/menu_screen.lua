@@ -4,8 +4,11 @@ MenuScreen.new = function()
     local layout = nil
 
     local loadContent = function(self)
+        local projector = ServiceLocator.get(Projector)
         local contents = love.filesystem.read('dat/menu_screen.json')
-        layout = Layout(contents, self)
+        layout = Layout(contents, self, function(x, y)
+            return projector:toWorld(x, y) 
+        end)
     end
 
     local unloadContent = function(self) end
