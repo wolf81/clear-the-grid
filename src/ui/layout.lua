@@ -2,6 +2,17 @@ local json = require 'lib.json.json'
 
 local Layout = {}
 
+local function getFont(font_info)
+    local size = font_info.size or 20
+
+    local font = love.graphics.getFont(size)
+    if font_info.file ~= nil then
+        font = love.graphics.newFont(font_info.file, size)
+    end
+
+    return font
+end
+
 local hexToRgb = function(hex)
     local r, g, b, a = 255, 255, 255, 255
 
@@ -42,7 +53,7 @@ local createStates = function(tbl)
     return states
 end
 
-local createLabel = function(tbl, toWorld, opts)
+local createLabel = function(tbl, toWorld)
     local x, y = unpack(tbl.pos)
     local w, h = 0, 0
 
@@ -54,9 +65,11 @@ local createLabel = function(tbl, toWorld, opts)
     local states = createStates(tbl.states or {})
     local state = 'normal'
 
+    local font = getFont(tbl.font or {})
+
     local text = tbl.text or ''
-    w = opts.font:getWidth(text) + 20
-    h = opts.font:getHeight() + 10
+    w = font:getWidth(text) + 20
+    h = font:getHeight() + 10
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     return {
@@ -73,6 +86,7 @@ local createLabel = function(tbl, toWorld, opts)
             love.graphics.setColor(states[state].bg_color )
             love.graphics.rectangle('fill', x, y, w, h)
 
+            love.graphics.setFont(font)
             love.graphics.setColor(states[state].fg_color)
             love.graphics.print(tbl.text or '', x, y)
 
@@ -126,9 +140,11 @@ local createButton = function(tbl, toWorld, opts)
     local states = createStates(tbl.states or {})
     local state = 'normal'
 
+    local font = getFont(tbl.font or {})
+
     local text = tbl.text or ''
-    w = opts.font:getWidth(text) + 20
-    h = opts.font:getHeight() + 10
+    w = font:getWidth(text) + 20
+    h = font:getHeight() + 10
     local ox, oy = math.floor(-w / 2), math.floor(-h / 2)
 
     local action = function() print('click') end
@@ -171,6 +187,7 @@ local createButton = function(tbl, toWorld, opts)
             love.graphics.setColor(states[state].bg_color)
             love.graphics.rectangle('fill', x, y, w, h)
 
+            love.graphics.setFont(font)
             love.graphics.setColor(states[state].fg_color)
             love.graphics.print(text, x + 10, y + 5)
 
@@ -188,17 +205,11 @@ Layout.new = function(file, screen, toWorld)
     -- map screen coords to world coords - used for determining mouse position
     toWorld = toWorld or function(x, y) return x, y end
 
-    -- TODO: should reset on leave?
-    local font = love.graphics.getFont()
-
     for idx, obj in ipairs(items) do
         if obj.type == 'label' then
-            table.insert(controls, createLabel(obj, toWorld, { 
-                font = font,
-            }))
+            table.insert(controls, createLabel(obj, toWorld))
         elseif obj.type == 'button' then
             table.insert(controls, createButton(obj, toWorld, { 
-                font = font, 
                 screen = screen, 
             }))
         elseif obj.type == 'image' then
