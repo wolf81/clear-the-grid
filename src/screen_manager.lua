@@ -1,5 +1,3 @@
-local CrossfadeTransition = require 'src.transitions.crossfade_transition'
-
 local ScreenManager = {}
 
 ScreenManager.new = function()
@@ -12,12 +10,20 @@ ScreenManager.new = function()
         draw            = function() end,
     }
 
-    local switch = function(self, screen_, transition_)
-        if getmetatable(screen) == getmetatable(screen_) then return end
+    local switch = function(self, screen_, T, duration)        
+        if getmetatable(screen) == getmetatable(screen_) then 
+            if screen == screen_ then
+                return 
+            end
+        end
+
+        duration = duration or 0.5
+
+        T = T or CrossfadeTransition
 
         screen_:loadContent()
 
-        transition = transition_ or SlideTransition(0.5, screen, screen_, function() 
+        transition = transition_ or T(duration, screen, screen_, function() 
             screen:unloadContent()
             transition = nil
         end)

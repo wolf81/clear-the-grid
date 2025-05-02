@@ -2,8 +2,8 @@ local Game = require 'src.game'
 
 local GameScreen = {}
 
-GameScreen.new = function()
-    local game = Game(1)
+GameScreen.new = function(level)
+    local game = Game(level or 1)
 
     local loadContent = function(self) end
 

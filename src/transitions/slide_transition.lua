@@ -2,6 +2,10 @@ local min = math.min
 
 local SlideTransition = {}
 
+local function easeOutQuad(t)
+    return t * (2 - t)
+end
+
 SlideTransition.new = function(duration, from, to, finished)
     local time = 0.0
     local ox = 0
@@ -21,7 +25,7 @@ SlideTransition.new = function(duration, from, to, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        blend = (time / duration)
+        blend = easeOutQuad(time / duration)
 
         ox = - blend * VIRTUAL_W
 

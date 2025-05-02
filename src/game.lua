@@ -38,9 +38,7 @@ local function newBackgroundImage()
     end)
 end 
 
-Game.new = function()
-    local level = 1
-
+Game.new = function(level)
     local grid = loadGrid(level)
 
     -- draw a grid over the whole screen, visually like graph paper
@@ -56,7 +54,10 @@ Game.new = function()
         move_list:setMoves(grid:getMoves())
 
         if grid:isSolved() then
-            -- TODO: load next level
+            local screen_manager = ServiceLocator.get(ScreenManager)
+            Timer.after(0.5, function() 
+                screen_manager:switch(GameScreen(level + 1), SlideTransition, 1.0)
+            end)
         end
     end)
 

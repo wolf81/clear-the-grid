@@ -1,4 +1,5 @@
 Signal              = require 'lib.hump.signal'
+Timer               = require 'lib.hump.timer'
 
 Direction           = require 'src.direction'
 

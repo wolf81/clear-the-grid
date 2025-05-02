@@ -44,6 +44,8 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
+    Timer.update(dt)
+
     screen_manager:update(dt)
 
     input_manager:update(dt)
