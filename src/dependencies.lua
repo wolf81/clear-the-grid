@@ -4,7 +4,7 @@ Timer               = require 'lib.hump.timer'
 Direction           = require 'src.direction'
 
 -- UI
-Layout              = require 'src.ui.layout'
+Juin                 = require 'src.ui.juin'
 
 -- transitions
 CrossfadeTransition = require 'src.transitions.crossfade_transition'

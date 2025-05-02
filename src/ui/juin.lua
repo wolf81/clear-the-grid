@@ -1,6 +1,6 @@
 local json = require 'lib.json.json'
 
-local Layout = {}
+local Juin = {}
 
 local function getFont(font_info)
     local size = font_info.size or 20
@@ -217,8 +217,13 @@ local createButton = function(tbl, toWorld, opts)
     }
 end
 
-Layout.new = function(file, screen, toWorld)
-    local items = json.decode(file)
+Juin.new = function(file, screen, toWorld)
+    local contents, err = love.filesystem.read(file)
+    if not contents then
+        error(err)
+    end
+
+    local items = json.decode(contents)
 
     local controls = {}
     local control_info = {}
@@ -273,9 +278,13 @@ Layout.new = function(file, screen, toWorld)
         update      = update,
         toWorld     = toWorld,
         getControl  = getControl,
-    }, Layout)
+    }, Juin)
 end
 
-return setmetatable(Layout, {
-    __call = function(_, ...) return Layout.new(...) end,
+Juin.UI = function(file, screen, toWorld)
+    return Juin(file, screen, toWorld)
+end
+
+return setmetatable(Juin, {
+    __call = function(_, ...) return Juin.new(...) end,
 })

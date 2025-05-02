@@ -1,12 +1,12 @@
 local MenuScreen = {}
 
 MenuScreen.new = function()
-    local layout = nil
+    local ui = nil
 
     local loadContent = function(self)
         local projector = ServiceLocator.get(Projector)
-        local contents = love.filesystem.read('dat/menu_screen.json')
-        layout = Layout(contents, self, function(x, y)
+        
+        ui = Juin.UI('dat/menu_screen.json', self, function(x, y)
             return projector:toWorld(x, y) 
         end)
     end
@@ -14,11 +14,11 @@ MenuScreen.new = function()
     local unloadContent = function(self) end
 
     local update = function(self, dt)
-        layout:update(dt)
+        ui:update(dt)
     end
 
     local draw = function(self)
-        layout:draw()
+        ui:draw()
     end
 
     local newGame = function(self)
