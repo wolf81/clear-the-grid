@@ -1,0 +1,25 @@
+{
+	"menu_button": {
+		"margin": [ 20, 10, 20, 0 ],
+
+		"font": {
+			"file": "fnt/Kalam/Kalam-Bold.ttf",
+			"size": 40,
+		},
+		
+		"states": {
+			"normal": {
+				"fg_color": "#ffffff",
+				"bg_color": "#333333",
+			},
+			"hovered": {
+				"fg_color": "#ffffff",
+				"bg_color": "#882222",
+			},
+			"pressed": {
+				"fg_color": "#ffffff",
+				"bg_color": "#BB3333",
+			},
+		},
+	},
+},
