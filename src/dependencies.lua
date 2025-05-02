@@ -1,6 +1,6 @@
 Signal              = require 'lib.hump.signal'
 Timer               = require 'lib.hump.timer'
-Juin                = require 'lib.juin'
+juin                = require 'lib.juin'
 
 Direction           = require 'src.direction'
 

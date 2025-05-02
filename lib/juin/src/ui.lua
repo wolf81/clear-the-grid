@@ -281,10 +281,6 @@ Juin.new = function(file, screen, toWorld)
     }, Juin)
 end
 
-Juin.UI = function(file, screen, toWorld)
-    return Juin(file, screen, toWorld)
-end
-
 return setmetatable(Juin, {
     __call = function(_, ...) return Juin.new(...) end,
 })

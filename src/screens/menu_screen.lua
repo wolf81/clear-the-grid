@@ -6,7 +6,7 @@ MenuScreen.new = function()
     local loadContent = function(self)
         local projector = ServiceLocator.get(Projector)
         
-        ui = Juin.UI('dat/menu_screen.json', self, function(x, y)
+        ui = juin.UI('dat/menu_screen.json', self, function(x, y)
             return projector:toWorld(x, y) 
         end)
     end
