@@ -18,7 +18,6 @@ local DIR_INFO = {
 
 local Board = {}
 
-
 -- TODO: would be nicer to represent the non-0 values in the grid in a Graph
 local function findPlayableCell(grid, x, y, dir)
     local w, h = grid:getSize()
