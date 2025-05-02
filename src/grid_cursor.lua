@@ -40,57 +40,6 @@ local function drawDashedRectangle(x, y, w, h, dash_length, gap_length, offset)
     end
 end
 
--- TODO: would be nicer to represent the non-0 values in the grid in a Graph
-local function findPlayableCell(grid, x, y, dir)
-    local w, h = grid:getSize()
-
-    if dir == Direction.L then
-        x = max(x - 1, 1)
-
-        for x1 = x, 1, -1 do
-            if grid:getValue(x1, y) ~= 0 then
-                x = x1
-                break
-            end
-        end
-    end
-
-    if dir == Direction.R then
-        x = min(x + 1, w)
-
-        for x1 = x, w do
-            if grid:getValue(x1, y) ~= 0 then
-                x = x1
-                break
-            end
-        end
-    end
-
-    if dir == Direction.U then
-        y = max(y - 1, 1)
-
-        for y1 = y, 1, -1 do
-            if grid:getValue(x, y1) ~= 0 then
-                y = y1
-                break
-            end
-        end
-    end
-
-    if dir == Direction.D then
-        y = min(y + 1, h)
-
-        for y1 = y, h do
-            if grid:getValue(x, y1) ~= 0 then
-                y = y1
-                break
-            end
-        end
-    end
-
-    return x, y
-end
-
 GridCursor.new = function(grid)
     local grid_w, grid_h = grid:getSize()
 
@@ -119,30 +68,6 @@ GridCursor.new = function(grid)
         if state == 'default' then
             -- fade cursor in/out with time from 0.4 to 1.0
             alpha = 0.4 + 0.6 * (0.5 + 0.5 * sin(time * 2))            
-        end
-
-        local input_manager = ServiceLocator.get(InputManager)
-
-        if state == 'default' then
-            if input_manager:isPressed('right', 'd') then
-                local nx, ny = findPlayableCell(grid, x, y, Direction.R)
-                self:setCoord(nx, ny)
-            end
-
-            if input_manager:isPressed('left', 'a') then
-                local nx, ny = findPlayableCell(grid, x, y, Direction.L)
-                self:setCoord(nx, ny)
-            end
-
-            if input_manager:isPressed('up', 'w') then
-                local nx, ny = findPlayableCell(grid, x, y, Direction.U)
-                self:setCoord(nx, ny)
-            end
-
-            if input_manager:isPressed('down', 's') then
-                local nx, ny = findPlayableCell(grid, x, y, Direction.D)
-                self:setCoord(nx, ny)
-            end
         end
     end
 

@@ -2,6 +2,8 @@ local GridCursor        = require 'src.grid_cursor'
 local DirectionChooser  = require 'src.direction_chooser'
 local PeekView          = require 'src.peek_view'
 
+local min, max, ceil, sin = math.min, math.max, math.ceil, math.sin
+
 local FG_COLOR      = { 0.2, 0.2, 0.8, 1.0 }
 local GRID_COLOR    = { 0.5, 0.5, 0.5, 1.0 }
 local MARGIN_COLOR  = { 1.0, 0.2, 0.2, 1.0 }
@@ -15,6 +17,58 @@ local DIR_INFO = {
 }
 
 local Board = {}
+
+
+-- TODO: would be nicer to represent the non-0 values in the grid in a Graph
+local function findPlayableCell(grid, x, y, dir)
+    local w, h = grid:getSize()
+
+    if dir == Direction.L then
+        x = max(x - 1, 1)
+
+        for x1 = x, 1, -1 do
+            if grid:getValue(x1, y) ~= 0 then
+                x = x1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.R then
+        x = min(x + 1, w)
+
+        for x1 = x, w do
+            if grid:getValue(x1, y) ~= 0 then
+                x = x1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.U then
+        y = max(y - 1, 1)
+
+        for y1 = y, 1, -1 do
+            if grid:getValue(x, y1) ~= 0 then
+                y = y1
+                break
+            end
+        end
+    end
+
+    if dir == Direction.D then
+        y = min(y + 1, h)
+
+        for y1 = y, h do
+            if grid:getValue(x, y1) ~= 0 then
+                y = y1
+                break
+            end
+        end
+    end
+
+    return x, y
+end
 
 Board.new = function(grid)
     -- determine x and y offsets for drawing the grid
@@ -88,6 +142,27 @@ Board.new = function(grid)
         end    
 
         if cursor_state == 'default' then
+            local x, y = cursor:getCoord()
+            if input_manager:isPressed('right', 'd') then
+                local nx, ny = findPlayableCell(grid, x, y, Direction.R)
+                cursor:setCoord(nx, ny)
+            end
+
+            if input_manager:isPressed('left', 'a') then
+                local nx, ny = findPlayableCell(grid, x, y, Direction.L)
+                cursor:setCoord(nx, ny)
+            end
+
+            if input_manager:isPressed('up', 'w') then
+                local nx, ny = findPlayableCell(grid, x, y, Direction.U)
+                cursor:setCoord(nx, ny)
+            end
+
+            if input_manager:isPressed('down', 's') then
+                local nx, ny = findPlayableCell(grid, x, y, Direction.D)
+                cursor:setCoord(nx, ny)
+            end
+
             if input_manager:isReleased('r') then
                 grid:revertMove()
                 onGridChanged()
