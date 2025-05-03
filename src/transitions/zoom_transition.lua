@@ -6,7 +6,7 @@ end
 
 local ZoomTransition = {}
 
-ZoomTransition.new = function(duration, from, to, finished)
+ZoomTransition.new = function(duration, from, to, opts, finished)
     local time, alpha   = 0.0, 0.0
     local scale, rotate = 1.0, 0.0
     local ox, oy        = VIRTUAL_W / 2, VIRTUAL_H / 2

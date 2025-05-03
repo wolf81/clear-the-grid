@@ -2,7 +2,7 @@ local min = math.min
 
 local CrossfadeTransition = {}
 
-CrossfadeTransition.new = function(duration, from, to, finished)
+CrossfadeTransition.new = function(duration, from, to, opts, finished)
     local time = 0.0
     local alpha = 0.0
 

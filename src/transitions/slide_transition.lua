@@ -2,13 +2,27 @@ local min = math.min
 
 local SlideTransition = {}
 
+local DIRS = { 
+    left    = { -1,  0 },
+    right   = {  1,  0 },
+    up      = {  0, -1 },
+    down    = {  0,  1 },
+}
+
 local function easeOutQuad(t)
     return t * (2 - t)
 end
 
-SlideTransition.new = function(duration, from, to, finished)
-    local time = 0.0
-    local ox = 0
+SlideTransition.new = function(duration, from, to, opts, finished)
+    local time, alpha   = 0.0, 0.0
+    local ox, oy        = 0, 0
+
+    -- the dir key can be used to set animation direction, e.g. { dir = 'left' }
+    local dir = opts.dir or 'left'
+    if DIRS[dir] == nil then
+        error('Invalid direction, valid options are: left, right, up & down')
+    end
+    local dx, dy = unpack(DIRS[dir])
 
     love.graphics.setColor(1, 1, 1, 1)
 
@@ -25,7 +39,10 @@ SlideTransition.new = function(duration, from, to, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        ox = -(easeOutQuad(time / duration) * VIRTUAL_W)
+
+        alpha = time / duration
+        ox = dx * easeOutQuad(alpha) * VIRTUAL_W
+        oy = dy * easeOutQuad(alpha) * VIRTUAL_H
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    
@@ -33,11 +50,11 @@ SlideTransition.new = function(duration, from, to, finished)
 
     local draw = function(self)
         love.graphics.push()
-        love.graphics.translate(ox, 0)
+        love.graphics.translate(ox, oy)
 
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(from_canvas)
-        love.graphics.draw(to_canvas, VIRTUAL_W)
+        love.graphics.draw(to_canvas, -dx * VIRTUAL_W, -dy * VIRTUAL_H)
 
         love.graphics.pop()
     end

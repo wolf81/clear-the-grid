@@ -10,7 +10,7 @@ ScreenManager.new = function()
         draw            = function() end,
     }
 
-    local switch = function(self, screen_, T, duration)        
+    local switch = function(self, screen_, T, duration, opts)        
         if getmetatable(screen) == getmetatable(screen_) then 
             if screen == screen_ then
                 return 
@@ -19,11 +19,14 @@ ScreenManager.new = function()
 
         duration = duration or 0.5
 
+        -- custom options table for a transition
+        opts = opts or {}
+
         T = T or CrossfadeTransition
 
         screen_:loadContent()
 
-        transition = transition_ or T(duration, screen, screen_, function() 
+        transition = transition_ or T(duration, screen, screen_, opts, function() 
             screen:unloadContent()
             transition = nil
         end)
