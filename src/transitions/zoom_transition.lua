@@ -1,5 +1,7 @@
 local min, abs, cos, M_PI = math.min, math.abs, math.cos, math.pi
 
+local tween = require 'src.transitions.tween'
+
 local function easeOutQuad(t)
     return t * (2 - t)
 end
@@ -27,7 +29,7 @@ ZoomTransition.new = function(duration, from, to, opts, finished)
     local update = function(self, dt)
         time = min(time + dt, duration)
         -- the alpha value indicates the progress in transition
-        alpha = easeOutQuad(time / duration)
+        alpha = tween[opts.ease](time / duration)
         scale = abs(cos(alpha * M_PI)) -- use abs to make value stay in 0..1 range
         -- rotate is synced with scale
         rotate = scale * -M_PI

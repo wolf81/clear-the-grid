@@ -1,3 +1,5 @@
+local tween = require 'src.transitions.tween'
+
 local ScreenManager = {}
 
 ScreenManager.new = function()
@@ -21,6 +23,10 @@ ScreenManager.new = function()
 
         -- custom options table for a transition
         opts = opts or {}
+        opts.ease = opts.ease or 'linear'
+        if not tween[opts.ease] then
+            error(string.format('Tween function does not exist: %s', opts.ease))
+        end
 
         T = T or CrossfadeTransition
 

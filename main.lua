@@ -35,7 +35,9 @@ function love.load(args)
     -- enable the OS sending repeated key presses while key is down
     love.keyboard.setKeyRepeat(true)
 
-    screen_manager:switch(MenuScreen(), ZoomTransition, 0.5)
+    screen_manager:switch(MenuScreen(), ZoomTransition, 0.5, {
+        ease = 'easeOut'
+    })
     ServiceLocator.register(screen_manager)
 end
 

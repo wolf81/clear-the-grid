@@ -1,5 +1,7 @@
 local min = math.min
 
+local tween = require 'src.transitions.tween'
+
 local CrossfadeTransition = {}
 
 CrossfadeTransition.new = function(duration, from, to, opts, finished)
@@ -21,7 +23,7 @@ CrossfadeTransition.new = function(duration, from, to, opts, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        alpha = (time / duration)
+        alpha = tween[opts.ease](time / duration)
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    

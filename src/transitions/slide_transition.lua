@@ -1,3 +1,5 @@
+local tween = require 'src.transitions.tween'
+
 local min = math.min
 
 local SlideTransition = {}
@@ -40,9 +42,9 @@ SlideTransition.new = function(duration, from, to, opts, finished)
     local update = function(self, dt)
         time = min(time + dt, duration)
 
-        alpha = time / duration
-        ox = dx * easeOutQuad(alpha) * VIRTUAL_W
-        oy = dy * easeOutQuad(alpha) * VIRTUAL_H
+        alpha = tween[opts.ease](time / duration)
+        ox = dx * alpha * VIRTUAL_W
+        oy = dy * alpha * VIRTUAL_H
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    

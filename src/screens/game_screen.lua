@@ -57,7 +57,13 @@ GameScreen.new = function(level)
         if grid:isSolved() then
             local screen_manager = ServiceLocator.get(ScreenManager)
             Timer.after(0.5, function() 
-                screen_manager:switch(GameScreen(level + 1), SlideTransition, 1.0)
+                -- use random direction for slide transition
+                local dirs = { 'up', 'down', 'left', 'right' }
+                
+                screen_manager:switch(GameScreen(level + 1), SlideTransition, 1.0, {
+                    dir = dirs[math.random(#dirs)],
+                    ease = 'easeInOut',
+                })
             end)
         end
     end)
