@@ -5,6 +5,22 @@ local GRID_COLOR = { 0.95, 0.95, 0.95, 1.0 }
 
 local GameScreen = {}
 
+local function newBackgroundImage()
+    -- create a background image representing graph paper
+    return ImageGenerator.render(VIRTUAL_W, VIRTUAL_H, function() 
+        love.graphics.setLineWidth(1)
+        love.graphics.setColor(GRID_COLOR)
+
+        for x = -16, VIRTUAL_W, 32 do
+            love.graphics.line(x, 0, x, VIRTUAL_H)            
+        end
+
+        for y = -16, VIRTUAL_H, 32 do
+            love.graphics.line(0, y, VIRTUAL_W, y)            
+        end
+    end)
+end 
+
 local loadGrid = function(index)
     local path = string.format('dat/0XX/%d.txt', index)
     print(string.format('loading level: %s', path))
@@ -22,25 +38,8 @@ local loadGrid = function(index)
     return grid
 end
 
-local function newBackgroundImage()
-    -- create a background image representing graph paper
-    return ImageGenerator.render(VIRTUAL_W, VIRTUAL_H, function() 
-        love.graphics.setLineWidth(1)
-        love.graphics.setColor(GRID_COLOR)
-
-        for x = -16, VIRTUAL_W, 32 do
-            love.graphics.line(x, 0, x, VIRTUAL_H)            
-        end
-
-        for y = -16, VIRTUAL_H, 32 do
-            love.graphics.line(0, y, VIRTUAL_W, y)            
-        end
-    end)
-end 
-
 GameScreen.new = function(level)
     level = level or 1
-
     local grid = loadGrid(level)
 
     -- draw a grid over the whole screen, visually like graph paper

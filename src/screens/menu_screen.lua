@@ -23,7 +23,7 @@ MenuScreen.new = function()
 
     local newGame = function(self)
         local screen_manager = ServiceLocator.get(ScreenManager)
-        screen_manager:switch(GameScreen())
+        screen_manager:switch(GameScreen(), ZoomTransition, 1.0)
     end
 
     local quit = function(self)

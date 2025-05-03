@@ -1,14 +1,16 @@
 local min = math.min
 
-local SlideTransition = {}
-
 local function easeOutQuad(t)
     return t * (2 - t)
 end
 
-SlideTransition.new = function(duration, from, to, finished)
+local ZoomTransition = {}
+
+ZoomTransition.new = function(duration, from, to, finished)
     local time = 0.0
     local ox = 0
+    local scale = 1.0
+    local blend = 0
 
     love.graphics.setColor(1, 1, 1, 1)
 
@@ -25,29 +27,34 @@ SlideTransition.new = function(duration, from, to, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        ox = -(easeOutQuad(time / duration) * VIRTUAL_W)
+        blend = easeOutQuad(time / duration)
+        scale = math.abs(math.cos(time / duration * math.pi))
+
+        ox = - blend * VIRTUAL_W
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    
     end
 
     local draw = function(self)
-        love.graphics.push()
-        love.graphics.translate(ox, 0)
-
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(from_canvas)
-        love.graphics.draw(to_canvas, VIRTUAL_W)
 
-        love.graphics.pop()
+        local ox = VIRTUAL_W / 2 - (VIRTUAL_W * scale) / 2
+        local oy = VIRTUAL_H / 2 - (VIRTUAL_H * scale) / 2
+
+        if blend < 0.5 then
+            love.graphics.draw(from_canvas, ox, oy, 0, scale, scale)
+        else
+            love.graphics.draw(to_canvas, ox, oy, 0, scale, scale)
+        end
     end
 
     return setmetatable({
         draw    = draw,
-        update  = update,    
-    }, SlideTransition)
+        update  = update,  
+    }, ZoomTransition)
 end
 
-return setmetatable(SlideTransition, {
-    __call = function(_, ...) return SlideTransition.new(...) end,
+return setmetatable(ZoomTransition, {
+    __call = function(_, ...) return ZoomTransition.new(...) end,
 })

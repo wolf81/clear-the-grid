@@ -7,6 +7,7 @@ Direction           = require 'src.direction'
 -- transitions
 CrossfadeTransition = require 'src.transitions.crossfade_transition'
 SlideTransition     = require 'src.transitions.slide_transition'
+ZoomTransition      = require 'src.transitions.zoom_transition'
 
 -- screens
 MenuScreen          = require 'src.screens.menu_screen'
