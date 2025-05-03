@@ -9,7 +9,7 @@ local STATES = {
     highlight   = true,
 }
 
-local GridCursor = {}
+local Cursor = {}
 
 -- Converts a distance along the rectangle's perimeter to a coordinate
 local function getPointOnRectPerimeter(x, y, w, h, dist)
@@ -40,7 +40,7 @@ local function drawDashedRectangle(x, y, w, h, dash_length, gap_length, offset)
     end
 end
 
-GridCursor.new = function(grid)
+Cursor.new = function(grid)
     local grid_w, grid_h = grid:getSize()
 
     -- at the start place a cursor near the center of the grid
@@ -143,9 +143,9 @@ GridCursor.new = function(grid)
         setCoord        = setCoord,
         onStateChange   = onStateChange,
         onCoordChange   = onCoordChange,
-    }, GridCursor)
+    }, Cursor)
 end
 
-return setmetatable(GridCursor, {
-    __call = function(_, ...) return GridCursor.new(...) end,
+return setmetatable(Cursor, {
+    __call = function(_, ...) return Cursor.new(...) end,
 })

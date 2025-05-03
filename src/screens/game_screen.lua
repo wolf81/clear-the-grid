@@ -1,9 +1,18 @@
-local Board     = require 'src.board'
-local MoveList  = require 'src.move_list'
+local Board         = require 'src.ui.board'
+local MoveList      = require 'src.ui.move_list'
+local Cursor        = require 'src.ui.cursor'
+local DirChooser    = require 'src.ui.dir_chooser'
+local ResultView    = require 'src.ui.result_view'
+
+local floor = math.floor
 
 local GRID_COLOR = { 0.95, 0.95, 0.95, 1.0 }
 
 local GameScreen = {}
+
+local inRange = function(val, min, max)
+    return val >= min and val <= max
+end
 
 local function newBackgroundImage()
     -- create a background image representing graph paper
@@ -42,15 +51,34 @@ GameScreen.new = function(level)
     level = level or 1
     local grid = loadGrid(level)
 
+    local grid_w, grid_h = grid:getSize()
+
     -- draw a grid over the whole screen, visually like graph paper
     local background = newBackgroundImage()
 
-    -- a board is a visual representation of a grid
-    local board = Board(grid)
+    local input_mode = 'mouse' -- 'keyboard'
 
-    local move_list = MoveList(grid)
-    local list_w, list_h = move_list:getSize()
+    local board         = Board(grid)       -- a grid in which each cell contains a number
+    local cursor        = Cursor(grid)      -- an indicator for active cell
+    local dir_chooser   = DirChooser(grid)  -- an indicator for possible directions
+    local result_view   = ResultView(grid)  -- preview the result of a move
+    local move_list     = MoveList(grid)
 
+    local list_w, list_h    = move_list:getSize()
+    local board_w, board_h  = board:getSize()
+
+    local transform = love.math.newTransform()
+    transform:translate((VIRTUAL_W - list_w - board_w) / 2, (VIRTUAL_H - board_h) / 2)
+
+    -- a user can use mouse or keyboard navigation to move the cursor
+    -- when clicking on the mouse button or return key, can toggle cursor highlight state
+    -- when cursor is highlighted, possible directions are shown
+    -- changing the active direction will show the result in the affected cell
+    -- the move list will show past moves of the user
+
+    -- local list_w, list_h = move_list:getSize()
+
+    --[[
     board:onGridChange(function() 
         move_list:setMoves(grid:getMoves())
 
@@ -67,6 +95,7 @@ GameScreen.new = function(level)
             end)
         end
     end)
+    --]]
 
     local loadContent = function(self) end
 
@@ -75,11 +104,37 @@ GameScreen.new = function(level)
     local update = function(self, dt)
         board:update(dt)
         move_list:update(dt)
+
+        local input_manager = ServiceLocator.get(InputManager)
+        if input_manager:isReleased('r') then
+            grid:revertMove()
+            move_list:setMoves(grid:getMoves())
+        end
+
+        local mx, my = input_manager:getMouseState()
+        mx, my = transform:inverse():transformPoint(mx, my)
+        local cx = floor((mx + GRID_SIZE) / GRID_SIZE)
+        local cy = floor((my + GRID_SIZE) / GRID_SIZE)
+        cursor:setCoord(cx, cy)
     end
 
     local draw = function(self)
-        love.graphics.draw(background)        
+        love.graphics.draw(background)
+
+        love.graphics.push()
+        love.graphics.applyTransform(transform)
+        -- local list_w, list_h = move_list:getSize()
+        -- love.graphics.translate(-list_w / 2, 0)        
         board:draw()
+
+        local cx, cy = cursor:getCoord()
+        if inRange(cx, 1, grid_w) and inRange(cy, 1, grid_h) then
+            cursor:draw()
+        end
+
+        love.graphics.pop()
+
+        love.graphics.setColor(1, 1, 1, 1)
         move_list:draw()
     end
     

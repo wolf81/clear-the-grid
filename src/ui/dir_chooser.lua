@@ -9,7 +9,7 @@ local DIR_INFO = {
     [Direction.D] = 'D',
 }
 
-local DirectionChooser = {}
+local DirChooser = {}
 
 local function getValidDirs(grid, x, y)
     local dirs = {}
@@ -25,7 +25,7 @@ local function getValidDirs(grid, x, y)
     return dirs, count
 end
 
-DirectionChooser.new = function(grid)
+DirChooser.new = function(grid)
     -- possible directions for the chooser
     local valid_dirs = {}
 
@@ -161,9 +161,9 @@ DirectionChooser.new = function(grid)
         setActive           = setActive,
         getDirection        = getDirection,
         onDirectionChange   = onDirectionChange,
-    }, DirectionChooser)
+    }, DirChooser)
 end
 
-return setmetatable(DirectionChooser, {
-    __call = function(_, ...) return DirectionChooser.new(...) end,
+return setmetatable(DirChooser, {
+    __call = function(_, ...) return DirChooser.new(...) end,
 })

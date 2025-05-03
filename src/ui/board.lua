@@ -1,7 +1,3 @@
-local GridCursor        = require 'src.grid_cursor'
-local DirectionChooser  = require 'src.direction_chooser'
-local PeekView          = require 'src.peek_view'
-
 local min, max, ceil, sin = math.min, math.max, math.ceil, math.sin
 
 local FG_COLOR      = { 0.2, 0.2, 0.8, 1.0 }
@@ -72,17 +68,12 @@ end
 Board.new = function(grid)
     -- determine x and y offsets for drawing the grid
     local w, h = grid:getSize()
-    local ox = math.floor((VIRTUAL_W - w * GRID_SIZE) / 2)
-    local oy = math.floor((VIRTUAL_H - h * GRID_SIZE) / 2)
+
+    --[[
+    local ox = math.floor(GRID_SIZE)
+    local oy = math.floor(-GRID_SIZE)
 
     local add = false
-
-    local cursor        = GridCursor(grid)
-    local dir_chooser   = DirectionChooser(grid)
-    local peek_view     = PeekView(grid)
-
-    -- callback
-    local onGridChanged = function() end
 
     cursor:onStateChange(function() 
         dir_chooser:setActive(cursor:getState() == 'highlight')
@@ -100,12 +91,14 @@ Board.new = function(grid)
             peek_view:setMove(x, y, DIR_INFO[dir], add)    
         end
     end)
+    --]]
 
     local font_manager = ServiceLocator.get(FontManager)
     local font = font_manager:get('default')
     local text_h = font:getHeight()
 
     local update = function(self, dt)
+        --[[
         cursor:update(dt)
         dir_chooser:update(dt)
         peek_view:update(dt)        
@@ -162,25 +155,16 @@ Board.new = function(grid)
                 cursor:setCoord(nx, ny)
             end
 
-            if input_manager:isReleased('r') then
-                grid:revertMove()
-                onGridChanged()
-            end
-
             if input_manager:isReleased('return') then
                 if grid:getValue(cursor:getCoord()) ~= 0 then
                     cursor:setState('highlight')
                 end
             end
-        end    
+        end   
+        --]] 
     end
 
     local draw = function(self)
-        love.graphics.push()
-
-        -- move grid to center of screen
-        love.graphics.translate(ox, oy)
-
         -- draw grid lines
         do
             love.graphics.setLineWidth(2)
@@ -223,28 +207,27 @@ Board.new = function(grid)
             love.graphics.pop()
         end
 
-        -- draw cursor
-        cursor:draw()
+        -- -- draw cursor
+        -- cursor:draw()
 
-        -- draw direction chooser
-        dir_chooser:draw()
+        -- -- draw direction chooser
+        -- dir_chooser:draw()
 
-        -- draw the peek view
-        peek_view:draw()
+        -- -- draw the peek view
+        -- peek_view:draw()
 
         -- reset color to white
         love.graphics.setColor(1, 1, 1, 1)
-
-        love.graphics.pop()
     end
 
-    local onGridChange = function(self, func)
-        onGridChanged = func or function() end
+    local getSize = function(self)
+        return w * GRID_SIZE, h * GRID_SIZE
     end
 
     return setmetatable({
         draw            = draw,
         update          = update,
+        getSize         = getSize,
         onGridChange    = onGridChange,
     }, Board)
 end

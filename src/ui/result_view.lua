@@ -1,8 +1,8 @@
 local COLOR = { 1.0, 0.2, 0.2, 1.0 }
 
-local PeekView = {}
+local ResultView = {}
 
-PeekView.new = function(grid)
+ResultView.new = function(grid)
     local x, y, value, change = 0, 0, 0, 0
 
     local font_manager = ServiceLocator.get(FontManager)
@@ -54,9 +54,9 @@ PeekView.new = function(grid)
         update      = update,
         setMove     = setMove,
         setActive   = setActive,
-    }, PeekView)
+    }, ResultView)
 end
 
-return setmetatable(PeekView, {
-    __call = function(_, ...) return PeekView.new(...) end,
+return setmetatable(ResultView, {
+    __call = function(_, ...) return ResultView.new(...) end,
 })
