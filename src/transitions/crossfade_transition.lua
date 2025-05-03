@@ -4,7 +4,7 @@ local CrossfadeTransition = {}
 
 CrossfadeTransition.new = function(duration, from, to, finished)
     local time = 0.0
-    local blend = 0.0
+    local alpha = 0.0
 
     love.graphics.setColor(1, 1, 1, 1)
 
@@ -21,17 +21,17 @@ CrossfadeTransition.new = function(duration, from, to, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        blend = (time / duration)
+        alpha = (time / duration)
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    
     end
 
     local draw = function(self)
-        love.graphics.setColor(1, 1, 1, 1.0 - blend)
+        love.graphics.setColor(1, 1, 1, 1.0 - alpha)
         love.graphics.draw(from_canvas)
 
-        love.graphics.setColor(1, 1, 1, blend)
+        love.graphics.setColor(1, 1, 1, alpha)
         love.graphics.draw(to_canvas)
 
         love.graphics.setColor(1, 1, 1, 1)

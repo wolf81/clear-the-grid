@@ -1,4 +1,4 @@
-local min = math.min
+local min, abs, cos, M_PI = math.min, math.abs, math.cos, math.pi
 
 local function easeOutQuad(t)
     return t * (2 - t)
@@ -7,10 +7,9 @@ end
 local ZoomTransition = {}
 
 ZoomTransition.new = function(duration, from, to, finished)
-    local time = 0.0
-    local ox = 0
-    local scale = 1.0
-    local blend = 0
+    local time, alpha   = 0.0, 0.0
+    local scale, rotate = 1.0, 0.0
+    local ox, oy        = VIRTUAL_W / 2, VIRTUAL_H / 2
 
     love.graphics.setColor(1, 1, 1, 1)
 
@@ -27,10 +26,11 @@ ZoomTransition.new = function(duration, from, to, finished)
 
     local update = function(self, dt)
         time = min(time + dt, duration)
-        blend = easeOutQuad(time / duration)
-        scale = math.abs(math.cos(time / duration * math.pi))
-
-        ox = - blend * VIRTUAL_W
+        -- the alpha value indicates the progress in transition
+        alpha = easeOutQuad(time / duration)
+        scale = abs(cos(alpha * M_PI)) -- use abs to make value stay in 0..1 range
+        -- rotate is synced with scale
+        rotate = scale * -M_PI
 
         -- TODO: this will prevent the last frame from drawing - is that an issue?
         if time == duration then finished() end    
@@ -39,14 +39,22 @@ ZoomTransition.new = function(duration, from, to, finished)
     local draw = function(self)
         love.graphics.setColor(1, 1, 1, 1)
 
-        local ox = VIRTUAL_W / 2 - (VIRTUAL_W * scale) / 2
-        local oy = VIRTUAL_H / 2 - (VIRTUAL_H * scale) / 2
+        love.graphics.push()
+        -- translate to the center, to scale & rotate from center point
+        love.graphics.translate(ox, oy)
+        -- negate scale to draw for left to right, top to bottom
+        love.graphics.scale(-scale, -scale)
+        -- rotate image
+        love.graphics.rotate(rotate)
 
-        if blend < 0.5 then
-            love.graphics.draw(from_canvas, ox, oy, 0, scale, scale)
+        -- on zoom out draw current screen, on zoom in draw next screen
+        if alpha < 0.5 then
+            love.graphics.draw(from_canvas, -ox, -oy, 0)
         else
-            love.graphics.draw(to_canvas, ox, oy, 0, scale, scale)
+            love.graphics.draw(to_canvas, -ox, -oy, 0)
         end
+
+        love.graphics.pop()
     end
 
     return setmetatable({
