@@ -11,10 +11,11 @@ Projector.new = function(virtual_w, virtual_h)
         transform:reset()
 
         local sx, sy = window_w / virtual_w, window_h / virtual_h
-        transform:scale(sx, sy)
+        local scale = math.min(sx, sy)
+        transform:scale(scale, scale)
 
-        local ox = floor((window_w - virtual_w * sx) / 2)
-        local oy = floor((window_h - virtual_h * sy) / 2)
+        local ox = floor((window_w - virtual_w * scale) / 2)
+        local oy = floor((window_h - virtual_h * scale) / 2)
         transform:translate(ox, oy)
     end
 
